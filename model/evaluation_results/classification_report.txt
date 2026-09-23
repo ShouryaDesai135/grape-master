@@ -1,0 +1,14 @@
+--- Classification Report ---
+                precision    recall  f1-score   support
+
+ bacterial_rot       0.60      1.00      0.75        15
+     black_rot       1.00      0.88      0.94       354
+  downy_mildew       0.99      0.91      0.95       146
+          esca       0.96      0.56      0.71       684
+       healthy       0.92      0.98      0.95       506
+   leaf_blight       0.52      0.98      0.68       324
+powdery_mildew       0.85      0.94      0.89        62
+
+      accuracy                           0.82      2091
+     macro avg       0.83      0.89      0.84      2091
+  weighted avg       0.88      0.82      0.82      2091

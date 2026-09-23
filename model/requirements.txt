@@ -1,0 +1,12 @@
+tensorflow==2.21.0
+tf-keras
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+split-folders
+opencv-python
+kaggle
+Pillow
+tqdm
