@@ -316,6 +316,14 @@ export function updateConversationContext(conversationId, canonicalContext, lang
   `).run(JSON.stringify(canonicalContext), language, conversationId);
 }
 
+export function updateConversationLanguage(conversationId, language) {
+  return getDb().prepare(`
+    UPDATE conversations
+    SET language = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(language, conversationId);
+}
+
 // ═══════════════════════════════════════════════════════════════
 // MESSAGE OPERATIONS
 // ═══════════════════════════════════════════════════════════════
@@ -367,18 +375,27 @@ export function addToReviewQueue({ messageId }) {
 }
 
 export function getPendingReviews(limit = 50) {
+  // Flagged message_id points at the bot reply; farmer query is the prior farmer turn.
   return getDb().prepare(`
-    SELECT rq.*, 
-      m.content as original_content,
+    SELECT rq.*,
+      m.content as bot_response,
       m.image_path,
       m.cnn_prediction,
       m.final_confidence,
       m.intent,
       m.created_at as message_created_at,
       c.language,
-      f.phone as farmer_phone,
+      f.name as farmer_name,
+      f.email as farmer_email,
       f.region as farmer_region,
-      (SELECT content FROM messages WHERE conversation_id = m.conversation_id AND sender = 'bot' AND created_at >= m.created_at ORDER BY created_at ASC LIMIT 1) as bot_response
+      (
+        SELECT content FROM messages
+        WHERE conversation_id = m.conversation_id
+          AND sender = 'farmer'
+          AND created_at <= m.created_at
+        ORDER BY created_at DESC
+        LIMIT 1
+      ) as user_query
     FROM review_queue rq
     JOIN messages m ON rq.message_id = m.id
     JOIN conversations c ON m.conversation_id = c.id
@@ -395,6 +412,24 @@ export function submitReview({ queueId, correctedAnswer, reviewedBy, status = 'a
     SET corrected_answer = ?, reviewed_by = ?, status = ?, reviewed_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `).run(correctedAnswer, reviewedBy, status, queueId);
+}
+
+export function getReviewQueueItem(queueId) {
+  return getDb().prepare(`
+    SELECT rq.*, m.content as bot_response, c.language,
+      (
+        SELECT content FROM messages
+        WHERE conversation_id = m.conversation_id
+          AND sender = 'farmer'
+          AND created_at <= m.created_at
+        ORDER BY created_at DESC
+        LIMIT 1
+      ) as user_query
+    FROM review_queue rq
+    JOIN messages m ON rq.message_id = m.id
+    JOIN conversations c ON m.conversation_id = c.id
+    WHERE rq.id = ?
+  `).get(queueId);
 }
 
 export function getReviewedItems(limit = 500) {
@@ -449,9 +484,13 @@ export function getAdminMetrics() {
       COUNT(DISTINCT conversation_id) as total_conversations,
       ROUND(AVG(CASE WHEN sender = 'bot' THEN final_confidence END) * 100, 1) as avg_confidence,
       SUM(CASE WHEN is_flagged = 1 THEN 1 ELSE 0 END) as flagged_count,
-      ROUND(AVG(CASE WHEN sender = 'bot' THEN response_time_ms END), 0) as avg_latency_ms
+      ROUND(AVG(CASE WHEN sender = 'bot' THEN response_time_ms END), 0) as avg_latency_ms,
+      SUM(CASE WHEN sender = 'bot' THEN 1 ELSE 0 END) as bot_replies,
+      SUM(CASE WHEN sender = 'farmer' THEN 1 ELSE 0 END) as farmer_questions
     FROM messages
   `).get();
+
+  const farmerCount = d.prepare(`SELECT COUNT(*) as count FROM farmers`).get().count;
 
   const languageVolume = d.prepare(`
     SELECT language, COUNT(*) as count
@@ -463,7 +502,7 @@ export function getAdminMetrics() {
   const dailyVolume = d.prepare(`
     SELECT DATE(created_at) as date, COUNT(*) as count
     FROM messages
-    WHERE created_at >= datetime('now', '-30 days')
+    WHERE sender = 'farmer' AND created_at >= datetime('now', '-30 days')
     GROUP BY DATE(created_at)
     ORDER BY date ASC
   `).all();
@@ -473,9 +512,9 @@ export function getAdminMetrics() {
   `).get();
 
   const topIntents = d.prepare(`
-    SELECT intent, COUNT(*) as count
+    SELECT COALESCE(intent, 'general') as intent, COUNT(*) as count
     FROM messages
-    WHERE sender = 'farmer' AND intent IS NOT NULL
+    WHERE sender = 'bot' AND intent IS NOT NULL AND intent != ''
     GROUP BY intent
     ORDER BY count DESC
     LIMIT 10
@@ -498,14 +537,63 @@ export function getAdminMetrics() {
     FROM feedback
   `).get();
 
+  const topQuestions = d.prepare(`
+    SELECT
+      m.content as question,
+      COALESCE(bot.intent, 'general') as intent,
+      c.language,
+      COUNT(*) as asked,
+      ROUND(AVG(bot.final_confidence) * 100, 1) as avg_confidence
+    FROM messages m
+    JOIN conversations c ON m.conversation_id = c.id
+    LEFT JOIN messages bot ON bot.conversation_id = m.conversation_id
+      AND bot.sender = 'bot'
+      AND bot.created_at >= m.created_at
+      AND bot.id = (
+        SELECT id FROM messages
+        WHERE conversation_id = m.conversation_id
+          AND sender = 'bot'
+          AND created_at >= m.created_at
+        ORDER BY created_at ASC
+        LIMIT 1
+      )
+    WHERE m.sender = 'farmer' AND LENGTH(TRIM(m.content)) > 3
+    GROUP BY LOWER(TRIM(m.content)), c.language
+    ORDER BY asked DESC
+    LIMIT 15
+  `).all();
+
+  const recentPending = d.prepare(`
+    SELECT rq.id,
+      m.final_confidence,
+      c.language,
+      rq.created_at,
+      (
+        SELECT content FROM messages
+        WHERE conversation_id = m.conversation_id
+          AND sender = 'farmer'
+          AND created_at <= m.created_at
+        ORDER BY created_at DESC
+        LIMIT 1
+      ) as user_query
+    FROM review_queue rq
+    JOIN messages m ON rq.message_id = m.id
+    JOIN conversations c ON m.conversation_id = c.id
+    WHERE rq.status = 'pending'
+    ORDER BY rq.created_at DESC
+    LIMIT 5
+  `).all();
+
   return {
-    totals,
+    totals: { ...totals, farmer_count: farmerCount },
     languageVolume,
     dailyVolume,
     pendingReviewCount: pendingReviewCount.count,
     topIntents,
     confidenceTrend,
-    feedbackSummary
+    feedbackSummary,
+    topQuestions,
+    recentPending,
   };
 }
 

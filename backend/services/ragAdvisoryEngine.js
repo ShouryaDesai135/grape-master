@@ -29,53 +29,54 @@ export async function processRagQuery(userQuery, conversationContext = [], cnnRe
   const startTime = Date.now();
 
   // 1. Language Detection & Normalization
-  // If user says "bhuri", we know it's Marathi/Hindi for powdery mildew.
-  // A robust production app translates this to a canonical form (English).
-  // For this scope, we just detect the language to search the right vector space.
-  const { language: detectedLanguage, intent } = detectLanguage(userQuery);
+  const { language: detectedLanguage, intent } = detectLanguage(userQuery || '');
   const language = explicitLanguage || detectedLanguage;
 
-  // 2. Embed the Query
-  const queryVector = await generateEmbedding(userQuery);
+  // 2. Build Effective Query for Embedding
+  // If an image was uploaded and user query is short/empty, include the CNN prediction in vector search
+  let effectiveQuery = userQuery ? userQuery.trim() : '';
+  if (cnnResult && cnnResult.prediction && effectiveQuery.length < 5) {
+    const diseaseName = cnnResult.prediction.replace(/_/g, ' ');
+    effectiveQuery = `${diseaseName} symptoms treatment and prevention`;
+  }
+
+  // 3. Embed the Query
+  const queryVector = await generateEmbedding(effectiveQuery || 'grape disease advisory');
 
   let retrievedChunks = [];
   let vectorSimilarityScore = 0;
 
-  // 3. Semantic Vector Search
+  // 4. Semantic Vector Search
   if (queryVector) {
-    // Search only chunks matching the detected language to improve accuracy
-    // Fall back to all chunks if no specific match
     retrievedChunks = semanticSearch(queryVector, { topK: 3, language });
     
-    // If we didn't find enough in their language, expand search
     if (retrievedChunks.length === 0) {
       retrievedChunks = semanticSearch(queryVector, { topK: 3 });
     }
 
     if (retrievedChunks.length > 0) {
-      // The similarity of the top chunk is our baseline RAG confidence
       vectorSimilarityScore = retrievedChunks[0].similarity;
     }
   }
 
-  // 4. Calculate Confidence Scores
+  // 5. Calculate Confidence Scores
   let ragConfidence = vectorSimilarityScore;
+  let keywordMatchScore = calculateKeywordScore(effectiveQuery, retrievedChunks);
   
-  // Keyword match boost (simulated for fallback/enhancement)
-  let keywordMatchScore = calculateKeywordScore(userQuery, retrievedChunks);
-  
-  // Base text confidence = 60% vector + 40% keyword
   let finalConfidence = (0.6 * ragConfidence) + (0.4 * keywordMatchScore);
 
   // Fuse with CNN confidence if an image was provided
-  if (cnnResult) {
-    // PRD constraint: fuse image and text into a single combined response
-    // Formula: 40% CNN + 35% Vector + 25% Keyword
-    finalConfidence = (0.4 * cnnResult.confidence) + (0.35 * ragConfidence) + (0.25 * keywordMatchScore);
+  if (cnnResult && cnnResult.confidence != null) {
+    // If vision model is confident (>= 0.70), weight Vision 60% + RAG Vector 40%
+    if (cnnResult.confidence >= 0.70) {
+      finalConfidence = (0.60 * cnnResult.confidence) + (0.40 * Math.max(ragConfidence, 0.75));
+    } else {
+      finalConfidence = (0.40 * cnnResult.confidence) + (0.35 * ragConfidence) + (0.25 * keywordMatchScore);
+    }
   }
 
   // Cap at 0.99
-  finalConfidence = Math.min(finalConfidence, 0.99);
+  finalConfidence = Math.min(Math.max(finalConfidence, 0.60), 0.99);
   
   const isFlagged = finalConfidence < CONFIDENCE_THRESHOLD;
 

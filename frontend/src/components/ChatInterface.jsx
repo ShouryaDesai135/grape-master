@@ -406,19 +406,22 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
                   </div>
                 </div>
 
-                {/* CNN Diagnosis Info */}
+                {/* Friendly Natural Sentence for CNN Vision Diagnosis */}
                 {msg.diagnosis && (
-                  <div className="mt-3 mb-4 flex flex-wrap gap-2">
-                    <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">
-                      📷 CNN: {msg.diagnosis.prediction?.replace(/_/g, ' ')}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs">
-                      Vision Confidence: {Math.round((msg.diagnosis.confidence || 0) * 100)}%
-                    </span>
-                    {msg.isFlagged && (
-                      <span className="px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold flex items-center gap-1">
-                        <AlertTriangle className="w-3 h-3" /> Flagged for expert review
+                  <div className="mt-3 mb-4 p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-200 leading-relaxed">
+                    <div className="flex items-center justify-between gap-2 font-bold mb-1 text-indigo-300">
+                      <span>🌿 Leaf Vision Diagnosis</span>
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[11px]">
+                        {Math.round((msg.diagnosis.confidence || 0) * 100)}% Confidence
                       </span>
+                    </div>
+                    <p>
+                      Our vision AI scanned your leaf image and identified <strong className="text-white underline decoration-indigo-400">{msg.diagnosis.prediction?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</strong>.
+                    </p>
+                    {msg.isFlagged && (
+                      <p className="mt-1.5 text-amber-300 text-[11px] flex items-center gap-1 font-semibold">
+                        <AlertTriangle className="w-3.5 h-3.5" /> Note: This result has been queued for human expert verification.
+                      </p>
                     )}
                   </div>
                 )}

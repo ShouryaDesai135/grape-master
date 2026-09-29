@@ -44,8 +44,8 @@ api.interceptors.response.use(
  * ───────────────────────────────────────────────────────────────── */
 
 // Auth
-export async function verifyFirebaseToken(idToken: string, name?: string) {
-  const res = await api.post('/api/auth/firebase-verify', { idToken, name });
+export async function verifyFirebaseToken(idToken: string, name?: string, preferredLanguage?: string) {
+  const res = await api.post('/api/auth/firebase-verify', { idToken, name, preferredLanguage });
   return res.data;
 }
 
@@ -84,6 +84,21 @@ export async function submitFeedback(messageId: string, rating: number, feedback
   return res.data;
 }
 
+export async function translateTexts(texts: string[], targetLanguage: string) {
+  const res = await api.post('/api/translate', { texts, targetLanguage });
+  return res.data as { success: boolean; translations: string[]; language: string };
+}
+
+export async function updateConversationLanguage(conversationId: string, language: string) {
+  const res = await api.patch(`/api/conversations/${conversationId}/language`, { language });
+  return res.data;
+}
+
+export async function updateLanguagePreference(preferredLanguage: string) {
+  const res = await api.patch('/api/auth/preferences', { preferredLanguage });
+  return res.data;
+}
+
 // Admin Dashboard
 export async function getAdminMetrics() {
   const res = await api.get('/api/admin/metrics');
@@ -96,6 +111,17 @@ export async function getReviewQueue() {
 }
 
 export async function submitReviewAction(id: string, correctedAnswer: string, approved: boolean) {
-  const res = await api.post('/api/admin/review', { id, correctedAnswer, approved });
+  const res = await api.post('/api/admin/review', {
+    queueId: id,
+    id,
+    correctedAnswer,
+    status: approved ? 'approved' : 'rejected',
+    approved,
+  });
   return res.data;
+}
+
+export async function exportRetrainingDataset() {
+  const res = await api.get('/api/admin/export', { responseType: 'blob' });
+  return res.data as Blob;
 }

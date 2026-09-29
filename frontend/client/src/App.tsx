@@ -20,6 +20,7 @@ import {
   FileText,
   FlaskConical,
   ImagePlus,
+  Globe,
   Leaf,
   LayoutDashboard,
   LogIn,
@@ -43,132 +44,26 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { verifyFirebaseToken, getConversations, getConversationMessages, sendChatMessage, submitFeedback, getAdminMetrics, getReviewQueue, submitReviewAction } from "./lib/api";
+import { verifyFirebaseToken, getConversations, getConversationMessages, sendChatMessage, submitFeedback, getAdminMetrics, getReviewQueue, submitReviewAction, translateTexts, updateConversationLanguage, updateLanguagePreference } from "./lib/api";
 import { signInWithGoogle, signInWithEmail, signUpWithEmail } from "./lib/firebase";
+import { translations, LANG_OPTIONS, LANG_DISPLAY, type LangCode } from "./lib/i18n";
 
 const green = "#2D7A4F";
 
-const translations: Record<string, Record<string, string>> = {
-  en: {
-    newChat: "New Chat",
-    vineyardDiagnosis: "Vineyard Diagnosis",
-    back: "Back",
-    online: "Grape Master advisor · online",
-    yourFarmQuestions: "Your farm, your questions",
-    whatToExplore: "What would you like to explore today?",
-    describeVineyard: "Describe what you’re seeing in the vineyard. You can also attach a photo for a closer look.",
-    spotMildew: "Spot early mildew",
-    planIrrigation: "Plan irrigation",
-    preparePruning: "Prepare for pruning",
-    analyzing: "Grape Master is analyzing your input…",
-    helpful: "Helpful",
-    notQuite: "Not quite",
-    aiGuidance: "AI guidance for your farm · Always use your judgement in the field",
-    pressEnter: "Press Enter to send",
-    justNow: "Just now",
-    flagged: "This response has been flagged for expert review.",
-    confidenceBadge: "confidence",
-    workspace: "Workspace",
-    tools: "Tools",
-    helpCenter: "Help center",
-    myVineyard: "My vineyard",
-    morning: "Good morning",
-    afternoon: "Good afternoon",
-    evening: "Good evening",
-    farmer: "Farmer",
-    startNew: "Start a new conversation",
-    askPlaceholder: "Ask about your vines…",
-    send: "Send message",
-    recent: "Recent activity",
-    loading: "Grape Master is thinking...",
-    overview: "Overview",
-    dashboard: "Dashboard",
-    history: "Past discussions",
-    adminWorkspace: "Admin workspace",
-    farmInsights: "Farm insights"
-  },
-  hi: {
-    newChat: "नई चैट",
-    vineyardDiagnosis: "खेत का निदान",
-    back: "पीछे",
-    online: "ग्रेप मास्टर सलाहकार · ऑनलाइन",
-    yourFarmQuestions: "आपका खेत, आपके प्रश्न",
-    whatToExplore: "आज आप क्या जानना चाहेंगे?",
-    describeVineyard: "बताएं कि आप खेत में क्या देख रहे हैं। आप एक फोटो भी जोड़ सकते हैं।",
-    spotMildew: "शुरुआती फफूंदी पहचानें",
-    planIrrigation: "सिंचाई की योजना बनाएं",
-    preparePruning: "कटाई की तैयारी करें",
-    analyzing: "ग्रेप मास्टर विश्लेषण कर रहा है…",
-    helpful: "मददगार",
-    notQuite: "सटीक नहीं",
-    aiGuidance: "आपके खेत के लिए एआई मार्गदर्शन · हमेशा अपने निर्णय का उपयोग करें",
-    pressEnter: "भेजने के लिए एंटर दबाएं",
-    justNow: "अभी",
-    flagged: "विशेषज्ञ की समीक्षा के लिए इसे चिह्नित किया गया है।",
-    confidenceBadge: "आत्मविश्वास",
-    workspace: "कार्यक्षेत्र",
-    tools: "उपकरण",
-    helpCenter: "सहायता केंद्र",
-    myVineyard: "मेरा खेत",
-    morning: "शुभ प्रभात",
-    afternoon: "नमस्कार",
-    evening: "शुभ संध्या",
-    farmer: "किसान",
-    startNew: "नई बातचीत शुरू करें",
-    askPlaceholder: "अपनी अंगूर की बेलों के बारे में पूछें...",
-    send: "संदेश भेजें",
-    recent: "हाल की गतिविधि",
-    loading: "ग्रेप मास्टर सोच रहा है...",
-    overview: "अवलोकन",
-    dashboard: "डैशबोर्ड",
-    history: "पिछली चर्चाएँ",
-    adminWorkspace: "प्रशासक कार्यक्षेत्र",
-    farmInsights: "कृषि अंतर्दृष्टि"
-  },
-  mr: {
-    newChat: "नवीन चॅट",
-    vineyardDiagnosis: "द्राक्षबाग निदान",
-    back: "मागे",
-    online: "ग्रेप मास्टर सल्लागार · ऑनलाइन",
-    yourFarmQuestions: "तुमचे शेत, तुमचे प्रश्न",
-    whatToExplore: "आज तुम्हाला काय जाणून घ्यायला आवडेल?",
-    describeVineyard: "तुम्ही द्राक्षबागेत काय पाहत आहात ते सांगा. तुम्ही फोटोही जोडू शकता.",
-    spotMildew: "लवकर बुरशी ओळखा",
-    planIrrigation: "सिंचनाचे नियोजन करा",
-    preparePruning: "छाटणीची तयारी करा",
-    analyzing: "ग्रेप मास्टर विश्लेषण करत आहे…",
-    helpful: "मदतगार",
-    notQuite: "अचूक नाही",
-    aiGuidance: "तुमच्या शेतासाठी एआय मार्गदर्शन · नेहमी तुमचा स्वतःचा निर्णय घ्या",
-    pressEnter: "पाठवण्यासाठी एंटर दाबा",
-    justNow: "आत्ताच",
-    flagged: "तज्ञांच्या पुनरावलोकनासाठी हे चिन्हांकित केले आहे.",
-    confidenceBadge: "आत्मविश्वास",
-    workspace: "कार्यक्षेत्र",
-    tools: "साधने",
-    helpCenter: "मदत केंद्र",
-    myVineyard: "माझी द्राक्षबाग",
-    morning: "शुभ सकाळ",
-    afternoon: "नमस्कार",
-    evening: "शुभ संध्याकाळ",
-    farmer: "शेतकरी",
-    startNew: "नवीन संभाषण सुरू करा",
-    askPlaceholder: "आपल्या द्राक्षवेलींबद्दल विचारा...",
-    send: "संदेश पाठवा",
-    recent: "अलीकडील क्रियाकलाप",
-    loading: "ग्रेप मास्टर विचार करत आहे...",
-    overview: "आढावा",
-    dashboard: "डॅशबोर्ड",
-    history: "मागील चर्चा",
-    adminWorkspace: "प्रशासक कार्यक्षेत्र",
-    farmInsights: "कृषी अंतर्दृष्टी"
-  }
+type LanguageContextValue = {
+  lang: LangCode;
+  setLang: (l: LangCode) => void;
+  changeLanguage: (l: LangCode, opts?: { conversationId?: string }) => Promise<void>;
+  t: (key: string) => string;
+  translating: boolean;
 };
 
-const LanguageContext = createContext({
-  lang: 'en',
-  setLang: (l: string) => {},
-  t: (key: string) => key
+const LanguageContext = createContext<LanguageContextValue>({
+  lang: "en",
+  setLang: () => {},
+  changeLanguage: async () => {},
+  t: (key) => key,
+  translating: false,
 });
 
 type IconType = typeof Leaf;
@@ -192,9 +87,9 @@ const conversations: Conversation[] = [
 ];
 
 const navItems = [
-  { label: "Overview", href: "/home", icon: LayoutDashboard },
-  { label: "Conversations", href: "/home/chat/new", icon: MessageCircle },
-  { label: "Saved guidance", href: "/home/profile", icon: Bookmark },
+  { labelKey: "overview", href: "/home", icon: LayoutDashboard },
+  { labelKey: "conversations", href: "/home/chat/new", icon: MessageCircle },
+  { labelKey: "savedGuidance", href: "/home/profile", icon: Bookmark },
 ];
 
 function cn(...classes: Array<string | false | null | undefined>) {
@@ -224,12 +119,69 @@ function Avatar({ initials, size = "md" }: { initials?: string; size?: "sm" | "m
   return <span className={cn("avatar", `avatar-${size}`)}>{displayInitials}</span>;
 }
 
-function LanguageSwitcher() {
-  const { lang, setLang } = useContext(LanguageContext);
+function LanguageSwitcher({ conversationId, onTranslateMessages }: { conversationId?: string; onTranslateMessages?: (lang: LangCode) => Promise<void> } = {}) {
+  const { lang, changeLanguage, t, translating } = useContext(LanguageContext);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const current = LANG_OPTIONS.find((o) => o.code === lang) || LANG_OPTIONS[0];
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const pick = async (code: LangCode) => {
+    if (code === lang) {
+      setOpen(false);
+      return;
+    }
+    setOpen(false);
+    await changeLanguage(code, { conversationId });
+    if (onTranslateMessages) await onTranslateMessages(code);
+  };
+
   return (
-    <select value={lang} onChange={e => setLang(e.target.value)} className="lang-select" style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'transparent', fontSize: '13px', cursor: 'pointer' }}>
-      <option value="en">English</option><option value="hi">हिंदी</option><option value="mr">मराठी</option>
-    </select>
+    <div className={cn("lang-dropdown", open && "open")} ref={ref}>
+      <button
+        type="button"
+        className="lang-dropdown-trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={t("chooseLanguage")}
+        onClick={() => setOpen((v) => !v)}
+        disabled={translating}
+      >
+        <Globe size={14} strokeWidth={2.2} />
+        <span className="lang-dropdown-current">{current.native}</span>
+        <ChevronDown size={14} className="lang-chevron" />
+      </button>
+      {open && (
+        <ul className="lang-dropdown-menu" role="listbox">
+          <li className="lang-dropdown-heading">{t("chooseLanguage")}</li>
+          {LANG_OPTIONS.map((opt) => (
+            <li key={opt.code}>
+              <button
+                type="button"
+                role="option"
+                aria-selected={opt.code === lang}
+                className={cn("lang-dropdown-option", opt.code === lang && "selected")}
+                onClick={() => pick(opt.code)}
+              >
+                <span className="lang-option-short">{opt.short}</span>
+                <span className="lang-option-text">
+                  <strong>{opt.native}</strong>
+                  <small>{opt.label}</small>
+                </span>
+                {opt.code === lang && <Check size={14} className="lang-option-check" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -257,13 +209,13 @@ function AppShell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [mobileMenu, setMobileMenu] = useState(false);
   const user = getUserInfo();
-  const { lang, setLang, t } = useContext(LanguageContext);
+  const { lang, t } = useContext(LanguageContext);
   
   const path = location.split("?")[0];
   const active = path === "/home" ? "/home" : path.startsWith("/home/chat") ? "/home/chat/new" : path;
   
   return (
-    <div className="app-shell">
+    <div className="app-shell" lang={lang}>
       <aside className={cn("app-sidebar", mobileMenu && "mobile-open")}>
         <div className="sidebar-top">
           <div className="sidebar-brand-row"><Brand /><button className="icon-btn mobile-close" onClick={() => setMobileMenu(false)}><X size={18} /></button></div>
@@ -273,7 +225,7 @@ function AppShell({ children }: { children: ReactNode }) {
           <p className="eyebrow nav-label">{t('workspace')}</p>
           {navItems.map((item) => {
             const Icon = item.icon;
-            return <Link key={item.href} href={item.href} onClick={() => setMobileMenu(false)} className={cn("sidebar-link", active === item.href && "active")}><Icon size={17} /><span>{t(item.label.toLowerCase()) || item.label}</span></Link>;
+            return <Link key={item.href} href={item.href} onClick={() => setMobileMenu(false)} className={cn("sidebar-link", active === item.href && "active")}><Icon size={17} /><span>{t(item.labelKey)}</span></Link>;
           })}
           <p className="eyebrow nav-label nav-label-spaced">{t('tools')}</p>
           {user.type === "admin" && (
@@ -282,7 +234,7 @@ function AppShell({ children }: { children: ReactNode }) {
           <button className="sidebar-link sidebar-button"><CircleHelp size={17} /><span>{t('helpCenter')}</span></button>
         </nav>
         <div className="sidebar-bottom">
-          <Link href="/home/profile" className="sidebar-profile"><Avatar size="sm" /><span><strong>{user.name || t('farmer')}</strong><small>{user.email || "Farmer account"}</small></span><Settings2 size={16} /></Link>
+          <Link href="/home/profile" className="sidebar-profile"><Avatar size="sm" /><span><strong>{user.name || t('farmer')}</strong><small>{user.email || t('farmerAccount')}</small></span><Settings2 size={16} /></Link>
         </div>
       </aside>
       {mobileMenu && <button className="scrim" aria-label="Close menu" onClick={() => setMobileMenu(false)} />}
@@ -290,7 +242,7 @@ function AppShell({ children }: { children: ReactNode }) {
         <header className="mobile-header"><button className="icon-btn" onClick={() => setMobileMenu(true)}><Menu size={21} /></button><Brand /><div className="mobile-header-actions"><LanguageSwitcher /><Bell size={18} /><Avatar size="sm" /></div></header>
         {children}
       </main>
-      <nav className="mobile-bottom-nav"><Link href="/home" className={cn(active === "/home" && "active")}><LayoutDashboard size={19} /><span>{t('dashboard')}</span></Link><Link href="/home/chat/new" className={cn(active === "/home/chat/new" && "active")}><MessageCircle size={19} /><span>Ask Grape</span></Link><Link href="/home/profile" className={cn(active === "/home/profile" && "active")}><UserRound size={19} /><span>Profile</span></Link></nav>
+      <nav className="mobile-bottom-nav"><Link href="/home" className={cn(active === "/home" && "active")}><LayoutDashboard size={19} /><span>{t('dashboard')}</span></Link><Link href="/home/chat/new" className={cn(active === "/home/chat/new" && "active")}><MessageCircle size={19} /><span>{t('askGrape')}</span></Link><Link href="/home/profile" className={cn(active === "/home/profile" && "active")}><UserRound size={19} /><span>{t('profile')}</span></Link></nav>
     </div>
   );
 }
@@ -305,22 +257,24 @@ function PageReveal({ children, className = "" }: { children: ReactNode; classNa
 }
 
 function Topbar({ title, kicker, action }: { title: string; kicker?: string; action?: ReactNode }) {
-  return <div className="topbar"><div><p className="eyebrow">{kicker || "My workspace"}</p><h1>{title}</h1></div><div className="topbar-actions"><LanguageSwitcher /><button className="icon-btn desktop-only"><Bell size={18} /></button><Avatar size="sm" />{action}</div></div>;
+  const { t } = useContext(LanguageContext);
+  return <div className="topbar"><div><p className="eyebrow">{kicker || t("myWorkspace")}</p><h1>{title}</h1></div><div className="topbar-actions"><LanguageSwitcher /><button className="icon-btn desktop-only"><Bell size={18} /></button><Avatar size="sm" />{action}</div></div>;
 }
 
 function HomePage() {
   const [list, setList] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const { lang, t } = useContext(LanguageContext);
 
   useEffect(() => {
     getConversations().then((res) => {
       if (res.conversations) {
         setList(res.conversations.map((c: any) => ({
           id: c.id,
-          title: c.title || "Vine consultation",
-          preview: c.last_message || c.preview || "Click to view full guidance…",
-          time: c.updated_at ? new Date(c.updated_at).toLocaleDateString() : "Recent",
-          language: c.language || "English",
+          title: c.title || t("vineyardDiagnosis"),
+          preview: c.last_message || c.preview || t("readFullGuidance"),
+          time: c.updated_at ? new Date(c.updated_at).toLocaleDateString(lang === "hi" ? "hi-IN" : lang === "mr" ? "mr-IN" : "en-IN") : t("justNow"),
+          language: LANG_DISPLAY[c.language] || c.language || "English",
           kind: c.title?.toLowerCase().includes("water") || c.title?.toLowerCase().includes("irrigation") ? "water" : c.title?.toLowerCase().includes("soil") ? "soil" : "leaf",
           confidence: c.avg_confidence ? Math.round(c.avg_confidence * 100) : 88,
           flagged: c.has_flagged
@@ -330,42 +284,39 @@ function HomePage() {
       console.warn("Failed to load conversations from API, showing initial state:", err);
       setList([]);
     }).finally(() => setLoading(false));
-  }, []);
+  }, [lang, t]);
 
   const user = getUserInfo();
-  
-  // Create dynamic greeting based on time of day
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  const firstName = user.name ? user.name.split(" ")[0] : "Farmer";
-  
-  // Format current date dynamically
-  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const greeting = hour < 12 ? t("morning") : hour < 18 ? t("afternoon") : t("evening");
+  const firstName = user.name ? user.name.split(" ")[0] : t("farmer");
+  const dateStr = new Date().toLocaleDateString(lang === "hi" ? "hi-IN" : lang === "mr" ? "mr-IN" : "en-IN", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
   return <AppShell><PageReveal className="page-content home-content">
     <Topbar title={`${greeting}, ${firstName}`} kicker={dateStr} />
     <section className="hero-grid">
       <div className="hero-copy">
-        <div className="hero-kicker"><span className="pulse-dot" /> Your daily vineyard check-in</div>
-        <h2>Let’s keep your<br /><em>vines thriving.</em></h2>
-        <p>Ask anything about your crop, from leaf health to the next best time to irrigate. I’ll bring the farm knowledge.</p>
-        <Link href="/home/chat/new" className="primary-btn large"><Plus size={18} /> Start a new conversation <ArrowUpRight size={17} /></Link>
-        <div className="hero-note"><ShieldCheck size={15} /><span>Private to your farm · Answers reviewed for clarity</span></div>
+        <div className="hero-kicker"><span className="pulse-dot" /> {t("dailyCheckin")}</div>
+        <h2>{t("heroTitle")}<br /><em>{t("heroTitleEm")}</em></h2>
+        <p>{t("heroBody")}</p>
+        <Link href="/home/chat/new" className="primary-btn large"><Plus size={18} /> {t("startNewConversation")} <ArrowUpRight size={17} /></Link>
+        <div className="hero-note"><ShieldCheck size={15} /><span>{t("privateNote")}</span></div>
       </div>
       <div className="insight-card">
         <div className="insight-orb orb-one" /><div className="insight-orb orb-two" />
-        <div className="insight-card-top"><span className="label-chip"><Sparkles size={13} /> Today’s insight</span><span className="muted-caption">Based on your recent questions</span></div>
-        <div className="insight-body"><div><p className="insight-topic">Vine health</p><h3>Keep an eye on the north block this week.</h3><p className="insight-text">Humidity is expected to stay high. Early morning scouting will help you catch mildew before it spreads.</p></div><ConfidenceRing value={87} size={112} label="confidence" /></div>
-        <Link href="/home/chat/new" className="insight-link">Read the full guidance <ArrowUpRight size={15} /></Link>
+        <div className="insight-card-top"><span className="label-chip"><Sparkles size={13} /> {t("todaysInsight")}</span><span className="muted-caption">{t("basedOnRecent")}</span></div>
+        <div className="insight-body"><div><p className="insight-topic">{t("vineHealth")}</p><h3>{t("insightHeadline")}</h3><p className="insight-text">{t("insightText")}</p></div><ConfidenceRing value={87} size={112} label={t("confidenceBadge")} /></div>
+        <Link href="/home/chat/new" className="insight-link">{t("readFullGuidance")} <ArrowUpRight size={15} /></Link>
       </div>
     </section>
-    <section className="recent-section"><div className="section-heading"><div><p className="eyebrow">Your knowledge trail</p><h2>Recent conversations</h2></div><Link href="/home/chat/new" className="text-btn">Start new <ArrowUpRight size={15} /></Link></div>{loading ? <p className="muted-caption">Loading your farm conversations…</p> : list.length === 0 ? <div className="conversation-card empty-card" style={{ padding: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}><Sprout size={28} style={{ color: green }} /><strong>No conversations yet</strong><span className="muted-caption">Ask a question about your vineyard or upload a leaf photo to get started.</span><Link href="/home/chat/new" className="primary-btn" style={{ marginTop: '12px' }}>Start your first conversation</Link></div> : <div className="conversation-list">{list.map((item, index) => <ConversationCard key={item.id} item={item} index={index} />)}</div>}</section>
+    <section className="recent-section"><div className="section-heading"><div><p className="eyebrow">{t("knowledgeTrail")}</p><h2>{t("recentConversations")}</h2></div><Link href="/home/chat/new" className="text-btn">{t("startNew")} <ArrowUpRight size={15} /></Link></div>{loading ? <p className="muted-caption">{t("loadingConversations")}</p> : list.length === 0 ? <div className="conversation-card empty-card" style={{ padding: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}><Sprout size={28} style={{ color: green }} /><strong>{t("noConversations")}</strong><span className="muted-caption">{t("noConversationsHint")}</span><Link href="/home/chat/new" className="primary-btn" style={{ marginTop: '12px' }}>{t("startFirst")}</Link></div> : <div className="conversation-list">{list.map((item, index) => <ConversationCard key={item.id} item={item} index={index} />)}</div>}</section>
   </PageReveal></AppShell>;
 }
 
 function ConversationCard({ item, index = 0 }: { item: Conversation; index?: number }) {
+  const { t } = useContext(LanguageContext);
   const Icon = item.kind === "image" ? ImagePlus : item.kind === "water" ? Sprout : item.kind === "soil" ? FlaskConical : Leaf;
-  return <Link href={`/home/chat/${item.id}`} className="conversation-card" style={{ animationDelay: `${index * 60}ms` }}><span className={cn("conversation-icon", item.kind)}><Icon size={17} /></span><span className="conversation-main"><strong>{item.title}</strong><span>{item.preview}</span><small>{item.time} <i /> {item.language}</small></span><span className="conversation-meta">{item.flagged ? <span className="flagged-badge"><span /> Flagged</span> : <span className={cn("confidence-badge", item.confidence && item.confidence >= 80 ? "high" : "medium")}>{item.confidence}% <span>confidence</span></span>}<ChevronRight size={17} /></span></Link>;
+  return <Link href={`/home/chat/${item.id}`} className="conversation-card" style={{ animationDelay: `${index * 60}ms` }}><span className={cn("conversation-icon", item.kind)}><Icon size={17} /></span><span className="conversation-main"><strong>{item.title}</strong><span>{item.preview}</span><small>{item.time} <i /> {item.language}</small></span><span className="conversation-meta">{item.flagged ? <span className="flagged-badge"><span /> {t("flagged")}</span> : <span className={cn("confidence-badge", item.confidence && item.confidence >= 80 ? "high" : "medium")}>{item.confidence}% <span>{t("confidenceBadge")}</span></span>}<ChevronRight size={17} /></span></Link>;
 }
 
 function ChatPage({ id: routeId }: { id?: string }) {
@@ -379,10 +330,11 @@ function ChatPage({ id: routeId }: { id?: string }) {
   const [attachmentName, setAttachmentName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [feedbackMap, setFeedbackMap] = useState<Record<string, number>>({});
+  const [langBanner, setLangBanner] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
-  const { lang, t } = useContext(LanguageContext);
-  const title = isNew ? t('newChat') : "Vineyard Diagnosis";
+  const { lang, t, translating } = useContext(LanguageContext);
+  const title = isNew ? t('newChat') : t('vineyardDiagnosis');
 
   useEffect(() => {
     if (!isNew && id) {
@@ -393,8 +345,8 @@ function ChatPage({ id: routeId }: { id?: string }) {
             role: (m.sender === "user" || m.sender === "farmer") ? "user" : "bot",
             text: m.content || m.text,
             imageUrl: m.image_path ? (m.image_path.startsWith('http') ? m.image_path : `http://localhost:5000${m.image_path.replace(/\\/g, '/')}`) : undefined,
-            confidence: m.confidence ? Math.round(m.confidence * 100) : undefined,
-            flagged: m.flagged
+            confidence: m.final_confidence ? Math.round(m.final_confidence * 100) : (m.confidence ? Math.round(m.confidence * 100) : undefined),
+            flagged: !!(m.is_flagged || m.flagged)
           })));
         }
       }).catch(err => console.warn("Failed to load message history:", err));
@@ -403,7 +355,7 @@ function ChatPage({ id: routeId }: { id?: string }) {
 
   useEffect(() => {
     if (threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight;
-  }, [messages.length, loading]);
+  }, [messages.length, loading, translating]);
 
   const handleFeedback = (msgId?: string, rating?: number) => {
     if (!msgId || !rating) return;
@@ -411,20 +363,52 @@ function ChatPage({ id: routeId }: { id?: string }) {
     submitFeedback(msgId, rating).catch(err => console.warn("Feedback submit error:", err));
   };
 
+  const translateBotMessages = async (targetLang: LangCode) => {
+    const botIndexes: number[] = [];
+    const botTexts: string[] = [];
+    messages.forEach((m, i) => {
+      if (m.role === "bot" && m.text?.trim()) {
+        botIndexes.push(i);
+        botTexts.push(m.text);
+      }
+    });
+    if (botTexts.length === 0) {
+      setLangBanner(`${t("langSwitchBanner")} ${LANG_DISPLAY[targetLang]}`);
+      return;
+    }
+    setLangBanner(t("translating"));
+    try {
+      const res = await translateTexts(botTexts, targetLang);
+      if (res.success && res.translations?.length === botTexts.length) {
+        setMessages((prev) => {
+          const next = [...prev];
+          botIndexes.forEach((idx, j) => {
+            next[idx] = { ...next[idx], text: res.translations[j] };
+          });
+          return next;
+        });
+      }
+    } catch (err) {
+      console.warn("Gemini translate failed:", err);
+    }
+    setLangBanner(`${t("langSwitchBanner")} ${LANG_DISPLAY[targetLang]}`);
+  };
+
   const sendMessage = async (text = draft) => {
     if (!text.trim() && !imageFile) return;
 
-    const userText = text.trim() || "Image uploaded for analysis.";
+    const userText = text.trim() || t("imageUploaded");
     const tempImageUrl = imageFile ? URL.createObjectURL(imageFile) : undefined;
     
     setMessages((current) => [...current, { role: "user", text: userText, imageUrl: tempImageUrl }]);
     setDraft("");
     setLoading(true);
+    setLangBanner(null);
 
     try {
       const formData = new FormData();
       formData.append("text", userText);
-      formData.append("language", lang); // Send active language explicitly
+      formData.append("language", lang);
       if (imageFile) {
         formData.append("image", imageFile);
       }
@@ -444,12 +428,11 @@ function ChatPage({ id: routeId }: { id?: string }) {
           role: "bot",
           text: response.answer || response.text || "No response received.",
           confidence: response.confidence ? Math.round(response.confidence * 100) : 85,
-          flagged: response.flagged
+          flagged: response.isFlagged || response.flagged
         }
       ]);
 
       if (isNew && response.conversationId) {
-        // Group follow-ups into the same conversation without a full page reload
         setId(response.conversationId);
         window.history.replaceState(null, "", `/home/chat/${response.conversationId}`);
       }
@@ -459,7 +442,7 @@ function ChatPage({ id: routeId }: { id?: string }) {
         ...current,
         {
           role: "bot",
-          text: "I am having trouble connecting to the advisory server. Please ensure the backend is running.",
+          text: t("connectionError"),
           confidence: 70
         }
       ]);
@@ -468,7 +451,7 @@ function ChatPage({ id: routeId }: { id?: string }) {
     }
   };
 
-  return <AppShell><div className="chat-page"><div className="chat-topbar"><Link href="/home" className="back-link"><ArrowLeft size={18} /> <span>{t('back')}</span></Link><div className="chat-title"><span className="chat-title-icon"><Leaf size={15} /></span><div><strong>{title}</strong><small>{t('online')}</small></div></div><div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LanguageSwitcher /><button className="icon-btn"><MoreHorizontal size={20} /></button></div></div><div className="chat-thread" ref={threadRef}>{messages.length === 0 ? <div className="chat-empty"><span className="empty-sprout"><Sprout size={25} /></span><p className="eyebrow">{t('yourFarmQuestions')}</p><h2>{t('whatToExplore')}</h2><p>{t('describeVineyard')}</p><div className="suggestion-grid"><button onClick={() => sendMessage(t('spotMildew'))}><Leaf size={16} /> {t('spotMildew')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('planIrrigation'))}><Sprout size={16} /> {t('planIrrigation')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('preparePruning'))}><ScissorsIcon /> {t('preparePruning')} <ArrowUpRight size={14} /></button></div></div> : <>{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} message={message} feedback={message.id ? feedbackMap[message.id] || null : null} setFeedback={(val) => handleFeedback(message.id, val || undefined)} />)}{loading && <div className="typing-note"><span className="online-dot" /> {t('analyzing')}</div>}</>}</div><div className="composer-wrap">{attachmentName && <div className="attachment-preview"><span><ImagePlus size={15} /> {attachmentName}</span><button onClick={() => { setImageFile(null); setAttachmentName(null); }}><X size={14} /></button></div>}<div className="composer"><textarea value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder={t('askPlaceholder')} rows={1} /><input ref={fileRef} type="file" accept="image/*" className="hidden-input" onChange={(event) => { const f = event.target.files?.[0]; if (f) { setImageFile(f); setAttachmentName(f.name); } }} /><button className="composer-icon" onClick={() => fileRef.current?.click()} aria-label="Attach image"><Paperclip size={18} /></button><button className={cn("send-btn", (draft.trim() || imageFile) && "ready")} onClick={() => sendMessage()} aria-label="Send message"><Send size={17} /></button></div><div className="composer-footer"><span><ShieldCheck size={13} /> {t('aiGuidance')}</span><span>{t('pressEnter')}</span></div></div></div></AppShell>;
+  return <AppShell><div className="chat-page"><div className="chat-topbar"><Link href="/home" className="back-link"><ArrowLeft size={18} /> <span>{t('back')}</span></Link><div className="chat-title"><span className="chat-title-icon"><Leaf size={15} /></span><div><strong>{title}</strong><small>{t('online')}</small></div></div><div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LanguageSwitcher conversationId={!isNew && id ? id : undefined} onTranslateMessages={translateBotMessages} /><button className="icon-btn"><MoreHorizontal size={20} /></button></div></div>{(langBanner || translating) && <div className="lang-switch-banner"><Globe size={14} /> {translating ? t("translating") : langBanner}</div>}<div className="chat-thread" ref={threadRef}>{messages.length === 0 ? <div className="chat-empty"><span className="empty-sprout"><Sprout size={25} /></span><p className="eyebrow">{t('yourFarmQuestions')}</p><h2>{t('whatToExplore')}</h2><p>{t('describeVineyard')}</p><div className="suggestion-grid"><button onClick={() => sendMessage(t('spotMildew'))}><Leaf size={16} /> {t('spotMildew')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('planIrrigation'))}><Sprout size={16} /> {t('planIrrigation')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('preparePruning'))}><ScissorsIcon /> {t('preparePruning')} <ArrowUpRight size={14} /></button></div></div> : <>{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} message={message} feedback={message.id ? feedbackMap[message.id] || null : null} setFeedback={(val) => handleFeedback(message.id, val || undefined)} />)}{loading && <div className="typing-note"><span className="online-dot" /> {t('analyzing')}</div>}</>}</div><div className="composer-wrap">{attachmentName && <div className="attachment-preview"><span><ImagePlus size={15} /> {attachmentName}</span><button onClick={() => { setImageFile(null); setAttachmentName(null); }}><X size={14} /></button></div>}<div className="composer"><textarea value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder={t('askPlaceholder')} rows={1} /><input ref={fileRef} type="file" accept="image/*" className="hidden-input" onChange={(event) => { const f = event.target.files?.[0]; if (f) { setImageFile(f); setAttachmentName(f.name); } }} /><button className="composer-icon" onClick={() => fileRef.current?.click()} aria-label="Attach image"><Paperclip size={18} /></button><button className={cn("send-btn", (draft.trim() || imageFile) && "ready")} onClick={() => sendMessage()} aria-label="Send message"><Send size={17} /></button></div><div className="composer-footer"><span><ShieldCheck size={13} /> {t('aiGuidance')}</span><span>{t('pressEnter')}</span></div></div></div></AppShell>;
 }
 
 function ScissorsIcon() { return <span className="scissors-icon">✂</span>; }
@@ -476,7 +459,7 @@ function ScissorsIcon() { return <span className="scissors-icon">✂</span>; }
 function MessageBubble({ message, feedback, setFeedback }: { message: { role: "user" | "bot"; text: string; imageUrl?: string; confidence?: number; flagged?: boolean }; feedback: number | null; setFeedback: (value: number | null) => void }) {
   const { t } = useContext(LanguageContext);
   if (message.role === "user") return <div className="message-row user-row"><div className="user-message">{message.imageUrl && <img src={message.imageUrl} alt="Uploaded" className="message-image" style={{ maxWidth: '200px', borderRadius: '8px', marginBottom: '8px' }} />}<p>{message.text}</p><small>{t('justNow')}</small></div></div>;
-  return <div className="message-row bot-row"><div className="bot-avatar"><Bot size={17} /></div><div className="bot-message"><p>{message.text}</p>{message.flagged && <div className="flagged-note"><ShieldCheck size={14} /> {t('flagged')}</div>}{message.confidence && <div className="message-bottom"><span className={cn("confidence-badge", message.confidence >= 80 ? "high" : "medium")}>{message.confidence}% {t('confidenceBadge')}</span><span className="feedback-actions"><button className={feedback === 1 ? "selected" : ""} onClick={() => setFeedback(feedback === 1 ? null : 1)}><ThumbsUp size={14} /> {t('helpful')}</button><button className={feedback === -1 ? "selected negative" : ""} onClick={() => setFeedback(feedback === -1 ? null : -1)}><ThumbsDown size={14} /> {t('notQuite')}</button></span></div>}</div></div>;
+  return <div className="message-row bot-row"><div className="bot-avatar"><Bot size={17} /></div><div className="bot-message"><p>{message.text}</p>{message.flagged && <div className="flagged-note"><ShieldCheck size={14} /> {t('flaggedNote')}</div>}{message.confidence && <div className="message-bottom"><span className={cn("confidence-badge", message.confidence >= 80 ? "high" : "medium")}>{message.confidence}% {t('confidenceBadge')}</span><span className="feedback-actions"><button className={feedback === 1 ? "selected" : ""} onClick={() => setFeedback(feedback === 1 ? null : 1)}><ThumbsUp size={14} /> {t('helpful')}</button><button className={feedback === -1 ? "selected negative" : ""} onClick={() => setFeedback(feedback === -1 ? null : -1)}><ThumbsDown size={14} /> {t('notQuite')}</button></span></div>}</div></div>;
 }
 
 function ProfilePage() {
@@ -485,6 +468,7 @@ function ProfilePage() {
   const [alerts, setAlerts] = useState(() => localStorage.getItem("alerts") !== "false");
   const [saved, setSaved] = useState(() => localStorage.getItem("saved") !== "false");
   const user = getUserInfo();
+  const { lang, t } = useContext(LanguageContext);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -492,7 +476,7 @@ function ProfilePage() {
     navigate("/auth/login");
   };
 
-  return <AppShell><PageReveal className="page-content profile-content"><div className="profile-back-row"><Link href="/home" className="back-link"><ArrowLeft size={16} /> Back to overview</Link><span className="profile-status"><span /> Profile synced</span></div><Topbar title="Profile & preferences" kicker="Your account" /><div className="profile-grid"><section className="profile-card profile-overview"><div className="profile-cover"><div className="profile-cover-grid" /><div className="cover-sun" /><div className="cover-row cover-row-one" /><div className="cover-row cover-row-two" /><span className="cover-caption">Nashik · Maharashtra</span></div><div className="profile-avatar-wrap"><Avatar size="lg" /><button className="edit-avatar" aria-label="Edit profile photo"><Camera size={13} /></button></div><div className="profile-identity"><h2>{user.name || "Grape Farmer"}</h2><p>{user.email || "Smallholder grape farmer · Nashik, Maharashtra"}</p><span className="verified-label"><Check size={13} /> Account verified</span></div><div className="profile-details"><div><span>Member since</span><strong>September 2026</strong></div><div><span>Preferred language</span><button className="profile-select">English <ChevronDown size={14} /></button></div><div><span>Farm profile</span><button className="profile-select">Grape vineyard <ChevronDown size={14} /></button></div></div><button className="secondary-btn profile-edit-btn"><Settings2 size={15} /> Edit farm profile</button><button className="secondary-btn profile-edit-btn" onClick={handleLogout} style={{ marginTop: '8px', color: '#dc2626', borderColor: '#fca5a5' }}><LogOut size={15} /> Sign out</button></section><section className="profile-card settings-card"><div className="section-heading"><div><p className="eyebrow">Personalize your experience</p><h2>Preferences</h2></div><Settings2 size={20} className="muted-icon" /></div><p className="settings-intro">Choose how Grape Master keeps you informed while you work in the field.</p><div className="setting-row"><div className="setting-icon"><Bell size={17} /></div><div><strong>Helpful reminders</strong><span>Get a gentle nudge for saved follow-ups</span></div><Toggle on={reminders} onClick={() => { setReminders(!reminders); localStorage.setItem("reminders", String(!reminders)); }} /></div><div className="setting-row"><div className="setting-icon"><ShieldCheck size={17} /></div><div><strong>Expert review alerts</strong><span>Know when a response is flagged for review</span></div><Toggle on={alerts} onClick={() => { setAlerts(!alerts); localStorage.setItem("alerts", String(!alerts)); }} /></div><div className="setting-row"><div className="setting-icon"><Bookmark size={17} /></div><div><strong>Saved guidance</strong><span>Keep answers close for your next field visit</span></div><Toggle on={saved} onClick={() => { setSaved(!saved); localStorage.setItem("saved", String(!saved)); }} /></div><div className="saved-guidance"><div className="saved-guidance-heading"><span><Bookmark size={15} /> Recent saved guidance</span><button className="text-btn">View all <ArrowUpRight size={14} /></button></div><p>“Scout 5–10 vines across the block rather than one plant.”</p><small>Powdery mildew on the north block · saved yesterday</small></div></section></div></PageReveal></AppShell>;
+  return <AppShell><PageReveal className="page-content profile-content"><div className="profile-back-row"><Link href="/home" className="back-link"><ArrowLeft size={16} /> {t("backToOverview")}</Link><span className="profile-status"><span /> {t("profileSynced")}</span></div><Topbar title={t("profileTitle")} kicker={t("yourAccount")} /><div className="profile-grid"><section className="profile-card profile-overview"><div className="profile-cover"><div className="profile-cover-grid" /><div className="cover-sun" /><div className="cover-row cover-row-one" /><div className="cover-row cover-row-two" /><span className="cover-caption">Nashik · Maharashtra</span></div><div className="profile-avatar-wrap"><Avatar size="lg" /><button className="edit-avatar" aria-label="Edit profile photo"><Camera size={13} /></button></div><div className="profile-identity"><h2>{user.name || t("farmer")}</h2><p>{user.email || "Nashik, Maharashtra"}</p><span className="verified-label"><Check size={13} /> {t("accountVerified")}</span></div><div className="profile-details"><div><span>{t("memberSince")}</span><strong>September 2026</strong></div><div><span>{t("preferredLanguage")}</span><div className="profile-lang-wrap"><LanguageSwitcher /></div></div><div><span>{t("farmProfile")}</span><button className="profile-select">{t("grapeVineyard")} <ChevronDown size={14} /></button></div></div><button className="secondary-btn profile-edit-btn"><Settings2 size={15} /> {t("editFarmProfile")}</button><button className="secondary-btn profile-edit-btn" onClick={handleLogout} style={{ marginTop: '8px', color: '#dc2626', borderColor: '#fca5a5' }}><LogOut size={15} /> {t("signOut")}</button></section><section className="profile-card settings-card"><div className="section-heading"><div><p className="eyebrow">{t("personalize")}</p><h2>{t("preferences")}</h2></div><Settings2 size={20} className="muted-icon" /></div><p className="settings-intro">{t("settingsIntro")}</p><div className="setting-row"><div className="setting-icon"><Bell size={17} /></div><div><strong>{t("helpfulReminders")}</strong><span>{t("helpfulRemindersDesc")}</span></div><Toggle on={reminders} onClick={() => { setReminders(!reminders); localStorage.setItem("reminders", String(!reminders)); }} /></div><div className="setting-row"><div className="setting-icon"><ShieldCheck size={17} /></div><div><strong>{t("expertReviewAlerts")}</strong><span>{t("expertReviewAlertsDesc")}</span></div><Toggle on={alerts} onClick={() => { setAlerts(!alerts); localStorage.setItem("alerts", String(!alerts)); }} /></div><div className="setting-row"><div className="setting-icon"><Bookmark size={17} /></div><div><strong>{t("savedGuidanceTitle")}</strong><span>{t("savedGuidanceDesc")}</span></div><Toggle on={saved} onClick={() => { setSaved(!saved); localStorage.setItem("saved", String(!saved)); }} /></div><div className="saved-guidance"><div className="saved-guidance-heading"><span><Bookmark size={15} /> {t("recentSaved")}</span><button className="text-btn">{t("viewAll")} <ArrowUpRight size={14} /></button></div><p>“Scout 5–10 vines across the block rather than one plant.”</p><small>Powdery mildew · {LANG_DISPLAY[lang]}</small></div></section></div></PageReveal></AppShell>;
 }
 
 function Toggle({ on, onClick }: { on?: boolean; onClick?: () => void }) { return <button className={cn("toggle", on && "on")} onClick={onClick} aria-pressed={on}><span /></button>; }
@@ -503,7 +487,7 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("EN");
+  const { lang, setLang, t } = useContext(LanguageContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const register = mode === "register";
@@ -513,11 +497,12 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
     setLoading(true);
     try {
       const { idToken } = await signInWithGoogle();
-      const res = await verifyFirebaseToken(idToken, name);
+      const res = await verifyFirebaseToken(idToken, name, lang);
       if (res.token) {
         localStorage.setItem("token", res.token);
-        if (res.farmer) localStorage.setItem("user", JSON.stringify(res.farmer));
+        if (res.farmer) localStorage.setItem("user", JSON.stringify({ ...res.farmer, preferredLanguage: lang }));
         else if (res.user) localStorage.setItem("user", JSON.stringify(res.user));
+        localStorage.setItem("preferredLanguage", lang);
         navigate("/home");
       } else {
         setError(res.error || "Authentication failed. Please try again.");
@@ -539,11 +524,12 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
         ? await signUpWithEmail(email, password)
         : await signInWithEmail(email, password);
       
-      const res = await verifyFirebaseToken(idToken, name);
+      const res = await verifyFirebaseToken(idToken, name, lang);
       if (res.token) {
         localStorage.setItem("token", res.token);
-        if (res.farmer) localStorage.setItem("user", JSON.stringify(res.farmer));
+        if (res.farmer) localStorage.setItem("user", JSON.stringify({ ...res.farmer, preferredLanguage: lang }));
         else if (res.user) localStorage.setItem("user", JSON.stringify(res.user));
+        localStorage.setItem("preferredLanguage", lang);
         navigate("/home");
       } else {
         setError(res.error || "Authentication failed. Please try again.");
@@ -556,32 +542,33 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
     }
   };
 
-  return <div className="auth-page"><div className="auth-visual"><div className="auth-visual-noise" /><div className="auth-visual-geometry"><span className="geometry-ring ring-one" /><span className="geometry-ring ring-two" /><span className="geometry-block block-one" /><span className="geometry-block block-two" /><span className="geometry-line geometry-line-one" /><span className="geometry-line geometry-line-two" /></div><div className="auth-brand"><Brand light /></div><div className="auth-visual-copy"><p className="eyebrow light-eyebrow"><span className="pulse-dot light" /> Built for the field</p><h1>Good decisions<br /><em>grow here.</em></h1><p>A calmer way to understand your vines, one question at a time.</p></div><div className="auth-quote"><span>“</span><p>The best farming advice is the kind you can use before the sun gets too high.</p><small>— Grape Master field notes</small></div></div><div className="auth-form-side"><div className="auth-form-wrap"><div className="auth-mobile-brand"><Brand /></div><div className="auth-heading"><span className="auth-heading-icon"><Sprout size={18} /></span><p className="eyebrow">{register ? "Start your field notes" : "Welcome back to your farm"}</p><h2>{register ? "Create your account" : "Welcome back"}</h2><p>{register ? "A little more clarity for every season." : "Your vineyard, your questions, your progress."}</p></div>        <form onSubmit={submit} className="auth-form">
-          {register && <label>Full name<input required minLength={2} value={name} onChange={e => setName(e.target.value)} placeholder="Ramesh Salunkhe" /></label>}
-          <label>Email address<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></label>
-          <label>Password
+  return <div className="auth-page" lang={lang}><div className="auth-visual"><div className="auth-visual-noise" /><div className="auth-visual-geometry"><span className="geometry-ring ring-one" /><span className="geometry-ring ring-two" /><span className="geometry-block block-one" /><span className="geometry-block block-two" /><span className="geometry-line geometry-line-one" /><span className="geometry-line geometry-line-two" /></div><div className="auth-brand"><Brand light /></div><div className="auth-visual-copy"><p className="eyebrow light-eyebrow"><span className="pulse-dot light" /> {t("builtForField")}</p><h1>{t("authHeroTitle")}<br /><em>{t("authHeroEm")}</em></h1><p>{t("authHeroBody")}</p></div><div className="auth-quote"><span>“</span><p>{t("authQuote")}</p><small>{t("authQuoteAuthor")}</small></div></div><div className="auth-form-side"><div className="auth-form-wrap"><div className="auth-mobile-brand"><Brand /></div><div className="auth-lang-row"><LanguageSwitcher /></div><div className="auth-heading"><span className="auth-heading-icon"><Sprout size={18} /></span><p className="eyebrow">{register ? t("startFieldNotes") : t("welcomeBackFarm")}</p><h2>{register ? t("createAccount") : t("welcomeBack")}</h2><p>{register ? t("authRegisterSub") : t("authLoginSub")}</p></div>        <form onSubmit={submit} className="auth-form">
+          {register && <label>{t("fullName")}<input required minLength={2} value={name} onChange={e => setName(e.target.value)} placeholder="Ramesh Salunkhe" /></label>}
+          <label>{t("emailAddress")}<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></label>
+          <label>{t("password")}
             <div className="password-input">
-              <input required minLength={8} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" />
-              <button type="button" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide" : "Show"}</button>
+              <input required minLength={8} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("passwordPlaceholder")} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)}>{showPassword ? t("hide") : t("show")}</button>
             </div>
-            {register && <span className="field-hint">Use at least 8 characters</span>}
+            {register && <span className="field-hint">{t("passwordHint")}</span>}
           </label>
           {register && <div className="language-field">
-            <span>Preferred language</span>
+            <span>{t("preferredLanguage")}</span>
             <div className="language-options">
-              {["EN", "हि", "म"].map((lang) => <button type="button" key={lang} className={selectedLang === lang ? "selected" : ""} onClick={() => setSelectedLang(lang)}>{lang}</button>)}
+              {LANG_OPTIONS.map((opt) => <button type="button" key={opt.code} className={lang === opt.code ? "selected" : ""} onClick={() => setLang(opt.code)}>{opt.short}</button>)}
             </div>
           </div>}
           {error && <p className="form-error">{error}</p>}
-          <button className="primary-btn auth-submit" disabled={loading}>{loading ? <span className="spinner" /> : register ? "Create account" : "Sign in"}<ArrowUpRight size={16} /></button>
-        </form><div className="auth-divider"><span>or continue with</span></div><button type="button" className="google-btn" onClick={handleGoogleSignIn} disabled={loading}><span className="google-g">G</span> Continue with Google</button><p className="auth-switch">{register ? "Already have an account?" : "Don't have an account?"} <Link href={register ? "/auth/login" : "/auth/register"}>{register ? "Sign in" : "Create one"}</Link></p><p className="auth-terms">By continuing, you agree to our <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>.</p></div></div></div>;
+          <button className="primary-btn auth-submit" disabled={loading}>{loading ? <span className="spinner" /> : register ? t("createAccountBtn") : t("signIn")}<ArrowUpRight size={16} /></button>
+        </form><div className="auth-divider"><span>{t("orContinue")}</span></div><button type="button" className="google-btn" onClick={handleGoogleSignIn} disabled={loading}><span className="google-g">G</span> {t("continueGoogle")}</button><p className="auth-switch">{register ? t("alreadyHave") : t("dontHave")} <Link href={register ? "/auth/login" : "/auth/register"}>{register ? t("signIn") : t("createOne")}</Link></p><p className="auth-terms">{t("termsAgree")} <a href="#terms">{t("terms")}</a> {t("and")} <a href="#privacy">{t("privacy")}</a>.</p></div></div></div>;
 }
 
 function SplashPage() {
   const [, navigate] = useLocation();
+  const { t } = useContext(LanguageContext);
   const pathRef = useRef<SVGPathElement>(null);
   useEffect(() => { const timeline = gsap.timeline({ onComplete: () => navigate("/auth/login") }); timeline.fromTo(pathRef.current, { strokeDasharray: 260, strokeDashoffset: 260 }, { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" }).fromTo(".splash-copy > *", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power3.out" }, "-=0.3"); return () => { timeline.kill(); }; }, [navigate]);
-  return <div className="splash-page"><div className="splash-logo"><svg viewBox="0 0 120 100"><path ref={pathRef} d="M32 72C56 70 78 57 88 29M32 72C27 51 36 32 54 24M32 72C53 77 72 80 91 74M55 24C67 19 80 21 88 29" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /><path d="M32 72C49 62 63 53 76 39" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg></div><div className="splash-copy"><h1>Grape <em>Master</em></h1><p>Your AI farm advisor</p><span>Preparing your field notes</span></div><div className="splash-footer"><Sprout size={13} /> Grow with confidence</div></div>;
+  return <div className="splash-page"><div className="splash-logo"><svg viewBox="0 0 120 100"><path ref={pathRef} d="M32 72C56 70 78 57 88 29M32 72C27 51 36 32 54 24M32 72C53 77 72 80 91 74M55 24C67 19 80 21 88 29" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /><path d="M32 72C49 62 63 53 76 39" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg></div><div className="splash-copy"><h1>Grape <em>Master</em></h1><p>{t("splashTagline")}</p><span>{t("preparingNotes")}</span></div><div className="splash-footer"><Sprout size={13} /> {t("growConfidence")}</div></div>;
 }
 
 function AdminLayout({ children, title, subtitle }: { children: ReactNode; title: string; subtitle: string }) {
@@ -727,9 +714,65 @@ function AdminLogin() {
 }
 
 function App() {
-  const [lang, setLang] = useState('en');
-  const t = (key: string) => translations[lang]?.[key] || translations['en'][key] || key;
-  return <LanguageContext.Provider value={{ lang, setLang, t }}><Switch><Route path="/" component={SplashPage} /><Route path="/auth/login" component={LoginRoute} /><Route path="/auth/register" component={RegisterRoute} /><Route path="/admin/login" component={AdminLogin} /><Route path="/home/chat/new" component={NewChatRoute} /><Route path="/home/chat/:id" component={ChatRoute} /><Route path="/home/profile" component={ProfilePage} /><Route path="/home" component={HomePage} /><Route path="/admin/review" component={ReviewPage} /><Route path="/admin/analytics" component={AnalyticsPage} /><Route path="/admin" component={AdminOverview} /><Route component={SplashPage} /></Switch></LanguageContext.Provider>;
+  const [lang, setLangState] = useState<LangCode>(() => {
+    const saved = localStorage.getItem("preferredLanguage");
+    if (saved === "hi" || saved === "mr" || saved === "en") return saved;
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.preferredLanguage === "hi" || user.preferredLanguage === "mr" || user.preferredLanguage === "en") {
+        return user.preferredLanguage;
+      }
+    } catch {}
+    return "en";
+  });
+  const [translating, setTranslating] = useState(false);
+
+  const setLang = (l: LangCode) => {
+    setLangState(l);
+    localStorage.setItem("preferredLanguage", l);
+    document.documentElement.lang = l === "hi" ? "hi" : l === "mr" ? "mr" : "en";
+  };
+
+  const changeLanguage = async (l: LangCode, opts?: { conversationId?: string }) => {
+    if (l === lang) return;
+    setTranslating(true);
+    setLang(l);
+    try {
+      if (localStorage.getItem("token")) {
+        await updateLanguagePreference(l).catch(() => {});
+        if (opts?.conversationId) {
+          await updateConversationLanguage(opts.conversationId, l).catch(() => {});
+        }
+      }
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const t = (key: string) => translations[lang]?.[key] || translations.en[key] || key;
+
+  useEffect(() => {
+    document.documentElement.lang = lang === "hi" ? "hi" : lang === "mr" ? "mr" : "en";
+  }, [lang]);
+
+  return (
+    <LanguageContext.Provider value={{ lang, setLang, changeLanguage, t, translating }}>
+      <Switch>
+        <Route path="/" component={SplashPage} />
+        <Route path="/auth/login" component={LoginRoute} />
+        <Route path="/auth/register" component={RegisterRoute} />
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/home/chat/new" component={NewChatRoute} />
+        <Route path="/home/chat/:id" component={ChatRoute} />
+        <Route path="/home/profile" component={ProfilePage} />
+        <Route path="/home" component={HomePage} />
+        <Route path="/admin/review" component={ReviewPage} />
+        <Route path="/admin/analytics" component={AnalyticsPage} />
+        <Route path="/admin" component={AdminOverview} />
+        <Route component={SplashPage} />
+      </Switch>
+    </LanguageContext.Provider>
+  );
 }
 export default App;
 // Keep this symbol in the bundle so the design system can be tuned from one place.
