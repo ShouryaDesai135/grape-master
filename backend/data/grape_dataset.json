@@ -1,0 +1,459 @@
+{
+  "metadata": {
+    "name": "Grape Master Agricultural Knowledge Base",
+    "version": "2.0.0",
+    "languages": ["en", "mr", "hi"],
+    "sources": [
+      "ICAR - National Research Centre for Grapes (NRCG), Pune",
+      "MPKV Rahuri Agricultural University",
+      "NIPHM - National Institute of Plant Health Management",
+      "CropMaster Production Farmer Advisory Dataset (Maharashtra)"
+    ],
+    "lastUpdated": "2026-11-05"
+  },
+  "diseases": [
+    {
+      "id": "bacterial_rot",
+      "name": {
+        "en": "Bacterial Rot (Bacterial Leaf Spot & Blight)",
+        "mr": "द्राक्षावरील जिवाणूजन्य करपा / सड (बॅक्टेरियल रॉट)",
+        "hi": "अंगूर का जीवाणु सड़न / बैक्टीरियल रॉट"
+      },
+      "pathogen": "Xanthomonas campestris pv. viticola",
+      "affectedParts": ["leaf", "stem", "fruit"],
+      "cause": {
+        "en": "Caused by bacterium Xanthomonas campestris pv. viticola. Spreads rapidly through rain splash, high humidity (>80%), warm temperatures (25-30°C), and contaminated pruning secateurs.",
+        "mr": "झॅन्थोमोनास कॅम्पेस्ट्रिस या जिवाणूमुळे होतो. पावसाचे शिंतोडे, जास्त आर्द्रता (>८०%), २५-३०°C तापमान आणि निर्जंतुक न केलेल्या छाटणीच्या कात्रीमुळे वेगाने पसरतो.",
+        "hi": "ज़ैन्थोमोनास कैम्पेस्ट्रिस जीवाणु के कारण होता है। बारिश की बौछारों, उच्च आर्द्रता (>80%), 25-30°C तापमान और संक्रमित छंटाई कैंची से तेजी से फैलता है।"
+      },
+      "symptoms": {
+        "en": "Angular dark brown to black water-soaked spots on leaves surrounded by a yellow halo. Necrotic lesions along leaf veins, black cankers on shoots and petioles, and water-soaked rot on developing berries.",
+        "mr": "पानांवर पिवळ्या कडा असलेले कोनाकृती गडद तपकिरी ते काळे पाणथळ डाग दिसतात. पानांच्या शिरांजवळ काळे चट्टे, काड्या व देठांवर काळे व्रण आणि मण्यांवर ओलसर सड दिसून येते.",
+        "hi": "पत्तियों पर पीले घेरे वाले कोणीय गहरे भूरे से काले पानी जैसे धब्बे। पत्ती की नसों के पास काले धब्बे, टहनियों पर कैंकर और दानों पर सड़न दिखाई देती है।"
+      },
+      "organic": {
+        "en": "Spray Bordeaux mixture 0.5% to 1% after pruning and rain events. Apply Pseudomonas fluorescens @ 5 g/L or Bacillus subtilis @ 5 g/L as foliar spray. Disinfect pruning tools with 1% Sodium Hypochlorite.",
+        "mr": "छाटणीनंतर आणि पावसानंतर ०.५% ते १% बोर्डो मिश्रणाची फवारणी करा. स्यूडोमोनास फ्लोरोसन्स ५ ग्रॅम/लीटर किंवा बॅसिलस सबटिलिस ५ ग्रॅम/लीटर पानांवर फवारा. छाटणीची हत्यारे सोडियम हायपोक्लोराईटने निर्जंतुक करा.",
+        "hi": "छंटाई और बारिश के बाद 0.5% से 1% बोर्डो मिश्रण का छिड़काव करें। स्यूडोमोनास फ्लोरोसेंस 5 ग्राम/लीटर या बैसिलस सबटिलिस 5 ग्राम/लीटर का पत्तियों पर छिड़काव करें। छंटाई के औजारों को कीटाणुरहित करें।"
+      },
+      "chemical": {
+        "en": "Spray Copper Hydroxide 53.8% DF @ 1.5 g/L OR Copper Oxychloride 50% WP @ 2.5 g/L mixed with Streptocycline @ 0.5 g/10 L water (where permitted) or Kasugamycin 3% SL @ 1.5 ml/L at 10-day intervals.",
+        "mr": "कॉपर हायड्रॉक्साईड ५३.८% DF १.५ ग्रॅम/लीटर किंवा कॉपर ऑक्सिक्लोराइड ५०% WP २.५ ग्रॅम/लीटर + स्ट्रेप्टोसायक्लिन ०.५ ग्रॅम/१० लीटर पाणी (किंवा कासुगामायसिन ३% SL १.५ मि.ली./लीटर) १० दिवसांच्या अंतराने फवारा.",
+        "hi": "कॉपर हाइड्रॉक्साइड 53.8% DF 1.5 ग्राम/लीटर या कॉपर ऑक्सीक्लोराइड 50% WP 2.5 ग्राम/लीटर + स्ट्रेप्टोसाइक्लिन 0.5 ग्राम/10 लीटर पानी (या कासुगामाइसिन 3% SL 1.5 मिली/लीटर) 10 दिन के अंतराल पर छिड़कें।"
+      },
+      "precautions": {
+        "en": "Remove and burn infected canes and leaves immediately. Avoid overhead sprinkler irrigation. Sterilize pruning shears between vines. Avoid excess nitrogen fertilizer during rainy weather.",
+        "mr": "बाधित काड्या व पाने तात्काळ काढून जाळून नष्ट करा. तुषार सिंचन टाळा. छाटणी करताना कात्री निर्जंतुक ठेवा. पावसाळी हवामानात नत्रयुक्त खतांचा अतिवापर टाळा.",
+        "hi": "संक्रमित टहनियों और पत्तियों को तुरंत हटाकर जला दें। फव्वारा सिंचाई से बचें। छंटाई के औजारों को साफ रखें और बरसात में यूरिया/नाइट्रोजन का अधिक प्रयोग न करें।"
+      }
+    },
+    {
+      "id": "downy_mildew",
+      "name": {
+        "en": "Downy Mildew",
+        "mr": "द्राक्षावरील केवडा / डाऊनी मिल्ड्यू",
+        "hi": "अंगूर का डाउनी मिल्ड्यू / केवड़ा रोग"
+      },
+      "pathogen": "Plasmopara viticola",
+      "affectedParts": ["leaf", "stem", "fruit"],
+      "cause": {
+        "en": "Caused by oomycete Plasmopara viticola. Spreads during high humidity (>85%), warm temperatures (20-25°C), morning dew, and prolonged leaf wetness.",
+        "mr": "प्लाझ्मोपारा व्हिटिकोला या बुरशीमुळे होतो. जास्त आर्द्रता (>८५%), २०-२५°C तापमान, सकाळचे धुके/दव आणि पानांवर दीर्घकाळ ओलावा राहिल्यास वेगाने प्रसार होतो.",
+        "hi": "प्लास्मोपारा विटिकोला ओमाइसीट से होता है। उच्च आर्द्रता (>85%), 20-25°C तापमान, सुबह की ओस और पत्तियों पर लंबे समय तक नमी रहने से फैलता है।"
+      },
+      "symptoms": {
+        "en": "Yellowish oily spots (oil lesions) on upper leaf surface and white cottony fungal growth on the underside of leaves. Young clusters and berries turn brown, shrivel, and dry up.",
+        "mr": "पानांच्या वरील बाजूस पिवळसर तेलकट डाग आणि खालील बाजूस पांढऱ्या कापसासारखी बुरशी दिसते. कोवळे घड व मणी तपकिरी होऊन सुकतात आणि पानांची अकाली गळ होते.",
+        "hi": "पत्ते की ऊपरी सतह पर पीले तैलीय धब्बे और निचली सतह पर सफेद रुईदार फफूंदी। प्रभावित गुच्छे और दाने भूरे पड़ जाते हैं और सिकुड़कर सूख जाते हैं।"
+      },
+      "organic": {
+        "en": "Spray Bordeaux mixture 1% (1 kg CuSO4 + 1 kg lime in 100 L water) before bud break. Apply Trichoderma viride @ 5 g/L or Bacillus subtilis @ 5 ml/L. Ensure canopy airflow by shoot thinning.",
+        "mr": "बोर्डो मिश्रण १% (१ किलो मोरचूद + १ किलो चुना १०० लीटर पाण्यात) फवारा. ट्रायकोडर्मा व्हिरिडी ५ ग्रॅम/लीटर किंवा बॅसिलस सबटिलिस ५ मि.ली./लीटर फवारा. पानांची विरळणी करून हवा खेळती ठेवा.",
+        "hi": "बोर्डो मिश्रण 1% (1 किलो कॉपर सल्फेट + 1 किलो चूना 100 लीटर पानी में) छिड़कें। ट्राइकोडर्मा विरिडे 5 ग्राम/लीटर का प्रयोग करें और बेल की छंटाई से हवा का प्रवाह बनाएं।"
+      },
+      "chemical": {
+        "en": "Spray Cymoxanil 8% + Mancozeb 64% WP (Curzate M8) @ 2 g/L OR Dimethomorph 50% WP (Acrobat) @ 1 g/L + Mancozeb 75% WP @ 2 g/L OR Fosetyl-Al 80% WP (Aliette) @ 2.5 g/L. Repeat at 7-10 day intervals in humid weather.",
+        "mr": "सायमोक्झॅनिल ८% + मॅन्कोझेब ६४% WP (कर्झेट M8) २ ग्रॅम/लीटर किंवा डायमेथोमॉर्फ ५०% WP (अॅक्रोबॅट) १ ग्रॅम/लीटर + मॅन्कोझेब २ ग्रॅम/लीटर किंवा फोसेटिल-Al ८०% WP (अलियेट) २.५ ग्रॅम/लीटर फवारा.",
+        "hi": "साइमोक्सैनिल 8% + मैंकोज़ेब 64% WP (कर्जेट M8) 2 ग्राम/लीटर या डाइमेथोमोर्फ 50% WP (एक्रोबैट) 1 ग्राम/लीटर + मैंकोज़ेब 2 ग्राम/लीटर या फोसेटिल-Al 80% WP 2.5 ग्राम/लीटर का छिड़काव करें।"
+      },
+      "precautions": {
+        "en": "Avoid overhead irrigation — use drip only. Remove and destroy fallen infected leaves. Prune dense lower shoots for air circulation and sunlight penetration. Spray preventively after any unseasonal rain.",
+        "mr": "तुषार सिंचन टाळून ठिबक सिंचन वापरा. गळलेली बाधित पाने नष्ट करा. बागेत सूर्यप्रकाश व हवा खेळती राहण्यासाठी गर्दीच्या फुटी काढा. अवकाळी पावसानंतर तातडीने प्रतिबंधात्मक फवारणी घ्या.",
+        "hi": "फव्वारा सिंचाई से बचें — ड्रिप सिंचाई का उपयोग करें। संक्रमित गिरी पत्तियां नष्ट करें। हवा और धूप के लिए निचली शाखाओं की छंटाई करें और बेमौसम बारिश के तुरंत बाद रोकथाम स्प्रे करें।"
+      }
+    },
+    {
+      "id": "powdery_mildew",
+      "name": {
+        "en": "Powdery Mildew",
+        "mr": "द्राक्षावरील भुरी रोग / पांढरी बुरशी",
+        "hi": "अंगूर का पाउडरी मिल्ड्यू / सफेद फफूंदी"
+      },
+      "pathogen": "Erysiphe necator (Uncinula necator)",
+      "affectedParts": ["leaf", "stem", "fruit"],
+      "cause": {
+        "en": "Caused by fungus Erysiphe necator. Thrives in cloudy, dry weather with moderate temperatures (20-32°C), cool nights, and shaded dense canopies. Does not require free water on leaves.",
+        "mr": "इरिसिफे नेकेटर बुरशीमुळे होतो. ढगाळ व कोरड्या हवामानात, मध्यम तापमानात (२०-३२°C), थंड रात्री आणि सावली असलेल्या घनदाट वेलींवर वेगाने पसरतो.",
+        "hi": "इरिसिफे नेकेटर फफूंद से होता है। बादल छाए रहने, सूखे मौसम, मध्यम तापमान (20-32°C) और घनी छायादार बेलों में तेजी से फैलता है।"
+      },
+      "symptoms": {
+        "en": "White-grey talcum-like powdery patches on both sides of leaves, young shoots, and developing berries. Infected berries develop russet scarring, crack open, and fail to ripen.",
+        "mr": "पानांच्या दोन्ही बाजूंवर, कोवळ्या काड्यांवर आणि मण्यांवर पांढऱ्या राखेसारखा भुरकट थर जमा होतो. बाधित मणी तडकतात, कडक होतात आणि त्यांची वाढ खुंटते.",
+        "hi": "पत्तियों की दोनों सतहों, कोमल शाखाओं और दानों पर सफेद पाउडर जैसी परत जम जाती है। संक्रमित दाने फट जाते हैं और सूख जाते हैं।"
+      },
+      "organic": {
+        "en": "Spray Potassium Bicarbonate @ 4 g/L or Ampelomyces quisqualis biocontrol agent @ 5 g/L. Wettable Sulfur 80% WP @ 2 g/L acts as an effective contact preventive.",
+        "mr": "पोटॅशियम बायकार्बोनेट ४ ग्रॅम/लीटर किंवा अँपेलोमायसिस क्विस्क्वालिस जैविक बुरशीनाशक ५ ग्रॅम/लीटर फवारा. विद्राव्य गंधक (सल्फर ८०% WP) २ ग्रॅम/लीटर प्रतिबंधात्मक म्हणून वापरा.",
+        "hi": "पोटेशियम बाइकार्बोनेट 4 ग्राम/लीटर या एम्पेलोमाइसिस क्विस्क्वैलिस 5 ग्राम/लीटर छिड़कें। घुलनशील सल्फर 80% WP 2 ग्राम/लीटर एक प्रभावी रोकथाम उपचार है।"
+      },
+      "chemical": {
+        "en": "Spray Wettable Sulfur 80% WP @ 2-3 g/L OR Hexaconazole 5% EC @ 1 ml/L OR Myclobutanil 10% WP @ 0.4 g/L OR Fluopyram + Tebuconazole (Luna Experience) @ 0.5 ml/L. Avoid sulfur above 35°C.",
+        "mr": "विद्राव्य गंधक (सल्फर ८०% WP) २-३ ग्रॅम/लीटर किंवा हेक्झाकोनॅझोल ५% EC १ मि.ली./लीटर किंवा मायक्लोब्युटानिल १०% WP ०.४ ग्रॅम/लीटर किंवा लुना एक्सपिरीयन्स ०.५ मि.ली./लीटर फवारा. तापमान ३५°C पेक्षा जास्त असल्यास सल्फर टाळा.",
+        "hi": "सल्फर 80% WP 2-3 ग्राम/लीटर या हेक्साकोनाज़ोल 5% EC 1 मिली/लीटर या माइक्लोब्यूटानिल 10% WP 0.4 ग्राम/लीटर या लूना एक्सपीरियंस 0.5 मिली/लीटर छिड़कें। 35°C से अधिक तापमान में सल्फर न छिड़कें।"
+      },
+      "precautions": {
+        "en": "Maintain an open canopy via timely shoot tying and leaf removal around clusters. Rotate triazole and strobilurin fungicides to prevent resistance. Do not apply sulfur within 10 days of oil sprays.",
+        "mr": "वेळेवर बागल काढणे व घडाभोवतीची पाने विरळ करून सूर्यप्रकाश खेळता ठेवा. बुरशीनाशकांचा गट बदलून आलटून-पालटून फवारणी करा.",
+        "hi": "शाखा बंधन और पत्ती विरलीकरण द्वारा गुच्छों तक धूप पहुंचने दें। प्रतिरोध से बचने के लिए फफूंदनाशकों को बदल-बदल कर छिड़कें।"
+      }
+    },
+    {
+      "id": "black_rot",
+      "name": {
+        "en": "Black Rot",
+        "mr": "द्राक्षावरील काळा करपा (ब्लॅक रॉट)",
+        "hi": "अंगूर का ब्लैक रॉट / काला सड़न"
+      },
+      "pathogen": "Guignardia bidwellii",
+      "affectedParts": ["leaf", "fruit", "stem"],
+      "cause": {
+        "en": "Caused by fungus Guignardia bidwellii during warm, humid, rainy weather (21-32°C) with 6+ hours of continuous leaf wetness during shoot elongation and fruit development.",
+        "mr": "गिग्नार्डिया बिडवेली बुरशीमुळे उबदार व पावसाळी हवामानात (२१-३२°C) पानांवर ६ तासांपेक्षा जास्त काळ ओलावा राहिल्यास प्रसार होतो. वाळलेल्या मण्यांमध्ये बुरशी जिवंत राहते.",
+        "hi": "गिगनार्डिया बिडवेली फफूंद से गर्म और बरसाती मौसम (21-32°C) में पत्तियों पर 6+ घंटे नमी रहने पर फैलता है। सूखे काले दानों में फफूंद जीवित रहती है।"
+      },
+      "symptoms": {
+        "en": "Circular reddish-brown spots with dark borders on leaves containing tiny black fruiting dots (pycnidia). Berries develop brown spots, shrivel rapidly, and turn into hard, wrinkled black mummies.",
+        "mr": "पानांवर गडद कडा असलेले तांबूस-तपकिरी गोलाकार डाग पडतात. द्राक्षाचे मणी तपकिरी होऊन सुकतात आणि काळ्या कडक सुरकुतलेल्या गोळ्यांसारखे (ममी) बनतात.",
+        "hi": "पत्तियों पर गहरी किनारी वाले लाल-भूरे गोल धब्बे। अंगूर के दाने भूरे होकर सिकुड़ जाते हैं और कड़े काले ममीफाइड दानों में बदल जाते हैं।"
+      },
+      "organic": {
+        "en": "Collect and destroy all mummified berries and infected canes during pruning. Spray Bordeaux mixture 1% or Bacillus subtilis @ 5 ml/L as preventive protection.",
+        "mr": "छाटणीच्या वेळी बागेतील सर्व सुकलेले काळे मणी व रोगट काड्या गोळा करून नष्ट करा. १% बोर्डो मिश्रण किंवा बॅसिलस सबटिलिस ५ मि.ली./लीटर प्रतिबंधात्मक फवारा.",
+        "hi": "छंटाई के समय सभी सूखे काले दानों और संक्रमित टहनियों को इकट्ठा करके नष्ट करें। 1% बोर्डो मिश्रण या बैसिलस सबटिलिस 5 मिली/लीटर का छिड़काव करें।"
+      },
+      "chemical": {
+        "en": "Spray Mancozeb 75% WP (M-45) @ 2.5 g/L OR Propineb 70% WP (Antracol) @ 2.5 g/L, alternating with Tebuconazole 25.9% EC @ 1 ml/L or Difenoconazole 25% EC (Score) @ 0.5 ml/L.",
+        "mr": "मॅन्कोझेब ७५% WP (M-45) २.५ ग्रॅम/लीटर किंवा प्रोपिनेब ७०% WP (अँट्राकॉल) २.५ ग्रॅम/लीटर आणि टेब्यूकोनॅझोल २५.९% EC १ मि.ली./लीटर किंवा डिफेनोकोनॅझोल २५% EC (स्कोअर) ०.५ मि.ली./लीटर आलटून-पालटून फवारा.",
+        "hi": "मैंकोज़ेब 75% WP (M-45) 2.5 ग्राम/लीटर या प्रोपिनेब 70% WP (एंट्राकॉल) 2.5 ग्राम/लीटर और टेबुकोनाज़ोल 25.9% EC 1 मिली/लीटर या डिफेनोकोनाज़ोल 25% EC 0.5 मिली/लीटर बारी-बारी से छिड़कें।"
+      },
+      "precautions": {
+        "en": "Sanitize the vineyard floor before bud break by removing old clusters and mummies. Ensure rapid drying of canopy through proper spacing and weed control.",
+        "mr": "डोळे फुटण्यापूर्वी बागेतील जुने घड व गळलेले मणी पूर्णपणे स्वच्छ करा. तण नियंत्रण व योग्य विरळणी करून बागेत ओलावा साचू देऊ नका.",
+        "hi": "कली खुलने से पहले बाग की जमीन से पुराने गुच्छे और सूखे दाने हटाएं। खरपतवार नियंत्रण और छंटाई द्वारा नमी कम रखें।"
+      }
+    },
+    {
+      "id": "esca",
+      "name": {
+        "en": "Esca (Black Measles)",
+        "mr": "द्राक्षावरील एस्का रोग / काळा गोवर (खोडकुज)",
+        "hi": "अंगूर का एस्का / ब्लैक मीज़ल्स"
+      },
+      "pathogen": "Phaeomoniella chlamydospora, Phaeoacremonium aleophilum",
+      "affectedParts": ["leaf", "fruit", "stem"],
+      "cause": {
+        "en": "Fungal trunk disease complex entering through large pruning wounds. Pathogens colonize vascular xylem tissue, blocking water and nutrient flow, especially visible in older vineyards (5+ years).",
+        "mr": "छाटणीच्या मोठ्या जखमांमधून खोडात शिरणाऱ्या बुरशींमुळे होतो. या बुरशी जलवाहिन्यांमध्ये (झायलम) वाढून पाणी व अन्नद्रव्यांचा पुरवठा रोखतात, विशेषतः जुन्या बागांमध्ये जास्त दिसतो.",
+        "hi": "छंटाई के बड़े घावों से तने में प्रवेश करने वाले कवक से होता है। यह जाइलम वाहिकाओं को अवरुद्ध कर पानी और पोषण का प्रवाह रोकता है।"
+      },
+      "symptoms": {
+        "en": "Characteristic tiger-stripe pattern on leaves (yellow/red interveinal chlorosis with dry brown necrotic margins). Purple-black superficial spots on berries (measles) and sudden wilting of shoots in hot weather.",
+        "mr": "पानांवर वाघाच्या पट्ट्यांसारखी (टायगर स्ट्राईप्स) लक्षणे — शिरांच्या दरम्यान पिवळसर/तांबूस रंग व वाळलेल्या कडा. मण्यांवर काळे-जांभळे ठिपके आणि उन्हात अचानक काड्या कोमेजणे.",
+        "hi": "पत्तियों पर बाघ की धारियों जैसा पैटर्न (शिराओं के बीच पीला/लाल रंग और सूखे भूरे किनारे)। दानों पर काले-बैंगनी धब्बे और तेज गर्मी में शाखाओं का अचानक मुरझाना।"
+      },
+      "organic": {
+        "en": "Apply Trichoderma viride or Trichoderma harzianum paste @ 10 g/L directly onto fresh pruning cuts immediately after pruning. Drench root zone with Trichoderma @ 2 kg/acre with FYM.",
+        "mr": "छाटणीनंतर लगेच ताज्या जखमांवर ट्रायकोडर्मा व्हिरिडी किंवा हरजियानम पेस्ट (१० ग्रॅम/लीटर) लावा. शेणखतासोबत एकरी २ किलो ट्रायकोडर्मा मुळांजवळ द्या.",
+        "hi": "छंटाई के तुरंत बाद ताजे घावों पर ट्राइकोडर्मा पेस्ट (10 ग्राम/लीटर) लगाएं। गोबर की खाद के साथ प्रति एकड़ 2 किलो ट्राइकोडर्मा जड़ों में दें।"
+      },
+      "chemical": {
+        "en": "Protect pruning wounds immediately using Bordeaux paste (10%) or Carbendazim 50% WP @ 2 g/L spray/paste, or Thiophanate Methyl 70% WP @ 1.5 g/L right after April and October pruning.",
+        "mr": "एप्रिल व ऑक्टोबर छाटणीनंतर लगेच खोडावरील जखमांवर १०% बोर्डो पेस्ट लावा किंवा कार्बेन्डाझिम ५०% WP २ ग्रॅम/लीटर किंवा थायोफिनेट मिथाईल ७०% WP १.५ ग्रॅम/लीटर फवारा.",
+        "hi": "अप्रैल और अक्टूबर छंटाई के तुरंत बाद घावों पर 10% बोर्डो पेस्ट लगाएं या कार्बेन्डाज़िम 50% WP 2 ग्राम/लीटर या थायोफैनेट मिथाइल 70% WP 1.5 ग्राम/लीटर का छिड़काव करें।"
+      },
+      "precautions": {
+        "en": "Prune during dry weather so wounds heal quickly. Cut back dead wood into healthy tissue and burn pruned debris outside the vineyard. Disinfect saws and shears between diseased vines.",
+        "mr": "जखमा लवकर भरण्यासाठी कोरड्या हवामानात छाटणी करा. मेलेले खोड निरोगी भागापर्यंत कापून बागेबाहेर जाळून टाका. रोगट वेली छाटल्यानंतर करवत व कात्री निर्जंतुक करा.",
+        "hi": "सूखे मौसम में छंटाई करें ताकि घाव जल्दी भरें। सूखी लकड़ी को स्वस्थ भाग तक काटकर बाग से बाहर जला दें और औजारों को कीटाणुरहित रखें।"
+      }
+    },
+    {
+      "id": "leaf_blight",
+      "name": {
+        "en": "Leaf Blight (Isariopsis Leaf Spot)",
+        "mr": "द्राक्षावरील पानांचा करपा (लीफ ब्लाईट / इसारिओप्सिस)",
+        "hi": "अंगूर की पत्ती अंगमारी / लीफ ब्लाइट"
+      },
+      "pathogen": "Pseudocercospora vitis (Isariopsis clavispora)",
+      "affectedParts": ["leaf"],
+      "cause": {
+        "en": "Caused by fungus Pseudocercospora vitis. Favored by post-monsoon humidity, warm afternoons, potash deficiency, and crowded lower leaves receiving poor sunlight.",
+        "mr": "स्यूडोसर्कोस्पोरा व्हिटिस बुरशीमुळे होतो. पावसाळ्यानंतरची आर्द्रता, दुपारचे उष्ण तापमान, पोटॅशची कमतरता आणि सूर्यप्रकाश न मिळणाऱ्या दाट खालच्या पानांमुळे रोग वाढतो.",
+        "hi": "स्यूडोसरकोस्पोरा विटिस फफूंद से होता है। मानसून के बाद की नमी, गर्म दोपहर, पोटाश की कमी और कम धूप वाली निचली पत्तियों में तेजी से फैलता है।"
+      },
+      "symptoms": {
+        "en": "Irregular angular brown to rusty-black spots scattered across older leaves, coalescing into large blighted patches. Leads to premature leaf scorching, defoliation, and poor cane maturity.",
+        "mr": "जुन्या पानांवर अनियमित कोनाकृती तपकिरी ते काळपट डाग पडतात. पुढे हे डाग एकत्र येऊन पान करपते, अकाली पानगळ होते आणि काडी पक्वतेवर विपरीत परिणाम होतो.",
+        "hi": "पुरानी पत्तियों पर अनियमित भूरे-काले धब्बे पड़ते हैं जो मिलकर बड़े झुलसे हुए हिस्सों में बदल जाते हैं। इससे समय से पहले पत्तियां झड़ती हैं और लकड़ी परिपक्वता रुकती है।"
+      },
+      "organic": {
+        "en": "Remove severely blighted basal leaves and destroy them. Spray Bordeaux mixture 0.5% or Trichoderma viride @ 5 g/L. Maintain adequate potassium nutrition.",
+        "mr": "तळाकडील तीव्र करपलेली पाने काढून नष्ट करा. ०.५% बोर्डो मिश्रण किंवा ट्रायकोडर्मा व्हिरिडी ५ ग्रॅम/लीटर फवारा. वेलीला पुरेसा पोटॅश (0:52:34 / 0:0:50) उपलब्ध करा.",
+        "hi": "निचली संक्रमित पत्तियों को हटाकर नष्ट करें। 0.5% बोर्डो मिश्रण या ट्राइकोडर्मा विरिडे 5 ग्राम/लीटर का छिड़काव करें और पोटाश पोषण बनाए रखें।"
+      },
+      "chemical": {
+        "en": "Spray Mancozeb 75% WP (M-45) @ 2.5 g/L OR Chlorothalonil 75% WP (Kavach) @ 2 g/L OR Carbendazim 12% + Mancozeb 63% WP (Saaf) @ 2 g/L OR Ziram 27% SC (Cuman L) @ 3 ml/L in 200 L water/acre.",
+        "mr": "मॅन्कोझेब ७५% WP (M-45) २.५ ग्रॅम/लीटर किंवा क्लोरोथॅलोनिल ७५% WP (कवच) २ ग्रॅम/लीटर किंवा साफ (कार्बेन्डाझिम + मॅन्कोझेब) २ ग्रॅम/लीटर किंवा कुमान एल ३ मि.ली./लीटर फवारा.",
+        "hi": "मैंकोज़ेब 75% WP (M-45) 2.5 ग्राम/लीटर या क्लोरोथैलोनिल 75% WP (कवच) 2 ग्राम/लीटर या साफ 2 ग्राम/लीटर या कुमान एल 3 मिली/लीटर का छिड़काव करें।"
+      },
+      "precautions": {
+        "en": "Keep the vineyard floor free of leaf litter and weeds. Avoid water stress or waterlogging. Balance nitrogen with potassium (00:52:34 @ 2.5 g/L foliar spray) to strengthen leaf cuticle.",
+        "mr": "बागेतील गळलेली पाने व तण स्वच्छ ठेवा. पाण्याचा ताण किंवा अतिरिक्त पाणी साचू देऊ नका. पानांची प्रतिकारशक्ती वाढवण्यासाठी ०:५२:३४ (२.५ ग्रॅम/लीटर) ची फवारणी करा.",
+        "hi": "बाग में गिरी पत्तियां और खरपतवार साफ रखें। जलभराव से बचें और पत्तियों की मजबूती के लिए 00:52:34 (2.5 ग्राम/लीटर) का पर्णीय छिड़काव करें।"
+      }
+    },
+    {
+      "id": "healthy",
+      "name": {
+        "en": "Healthy Grape Crop",
+        "mr": "निरोगी द्राक्ष बाग",
+        "hi": "स्वस्थ अंगूर की फसल"
+      },
+      "pathogen": "None",
+      "affectedParts": [],
+      "cause": {
+        "en": "Well-managed vineyard with balanced NPK and micronutrient nutrition, regulated drip irrigation, open canopy architecture, and timely preventive crop protection.",
+        "mr": "संतुलित NPK व सूक्ष्म अन्नद्रव्य व्यवस्थापन, नियंत्रित ठिबक सिंचन, मोकळी कॅनोपी आणि वेळेवर प्रतिबंधात्मक फवारणी असलेली निरोगी द्राक्ष बाग.",
+        "hi": "संतुलित NPK और सूक्ष्म पोषक तत्व, नियमित ड्रिप सिंचाई, खुली छतरी प्रबंधन और समय पर रोकथाम देखभाल वाली स्वस्थ अंगूर की बाग।"
+      },
+      "symptoms": {
+        "en": "Vibrant dark green leaves with good luster and zero fungal or bacterial lesions. Uniform cane maturity, healthy root white-tip activity, and even berry development.",
+        "mr": "कोणतेही डाग नसलेली टवटवीत काळोखीयुक्त हिरवी पाने, एकसारखी काडी पक्वता, पांढऱ्या मुळीची उत्तम वाढ आणि एकसमान मणी विकास.",
+        "hi": "बिना किसी धब्बे वाली चमकदार गहरी हरी पत्तियां, एकसमान शाखा परिपक्वता, स्वस्थ सफेद जड़ें और एकसमान दाना विकास।"
+      },
+      "organic": {
+        "en": "Continue Jeevamrut @ 200 L/acre through drip monthly, Seaweed Extract (Algamitz) @ 2 ml/L foliar spray for canopy vigor, and Vermicompost / FYM @ 5-8 tonnes/acre at basal stage.",
+        "mr": "मातीच्या आरोग्यासाठी दरमहा एकरी २०० लीटर जीवामृत ठिबकद्वारे द्या, जोमदार वाढीसाठी सीवीड अर्क २ मि.ली./लीटर फवारा आणि बेसल डोसमध्ये ५-८ टन शेणखत/गांडूळखत वापरा.",
+        "hi": "मिट्टी के स्वास्थ्य के लिए प्रतिमाह 200 लीटर/एकर जीवामृत ड्रिप से दें, सीवीड अर्क 2 मिली/लीटर का स्प्रे करें और 5-8 टन गोबर/वर्मीकम्पोस्ट खाद डालें।"
+      },
+      "chemical": {
+        "en": "No curative fungicide needed. Follow stage-wise NPK fertigation and foliar micronutrient spray (Combi-fert @ 1 g/L + MgSO4 @ 2.5 g/L) to maintain chlorophyll and leaf size.",
+        "mr": "कोणत्याही बुरशीनाशकाची गरज नाही. पानांची साईज व काळोखी टिकवण्यासाठी वाढीच्या टप्प्यानुसार NPK खत नियोजन आणि कॉम्बी फर्ट १ ग्रॅम/लीटर + मॅग्नेशियम सल्फेट २.५ ग्रॅम/लीटर फवारणी सुरू ठेवा.",
+        "hi": "किसी रोगनाशक दवा की आवश्यकता नहीं है। पत्तियों की चमक और आकार बनाए रखने के लिए नियमित NPK शेड्यूल और कॉम्बी-फर्ट 1 ग्राम/लीटर + मैग्नीशियम सल्फेट 2.5 ग्राम/लीटर स्प्रे करें।"
+      },
+      "precautions": {
+        "en": "Scout vineyard daily for early signs of thrips, powdery mildew, or downy mildew after weather changes. Maintain soil moisture at field capacity (wafsa condition) and test soil/petiole annually.",
+        "mr": "हवामान बदलांनंतर थ्रीप्स, भुरी किंवा डाऊनीच्या प्राथमिक लक्षणांसाठी दररोज बागेची पाहणी करा. जमिनीत वाफसा स्थिती राखा आणि दरवर्षी माती व देठ परीक्षण करा.",
+        "hi": "मौसम बदलने पर थ्रिप्स, पाउडरी या डाउनी मिल्ड्यू के शुरुआती लक्षणों के लिए रोजाना निरीक्षण करें। मिट्टी में उचित नमी (वाफसा) बनाए रखें।"
+      }
+    }
+  ],
+  "advisoryFAQs": [
+    {
+      "id": "faq_pruning_schedule",
+      "category": "pruning",
+      "question": {
+        "en": "When should I do foundation pruning (Kharad Chatani) and fruit pruning (Godi Bahar Chatani) in Maharashtra?",
+        "mr": "महाराष्ट्रात द्राक्षाची खरड छाटणी (एप्रिल) आणि गोडीबहार छाटणी (ऑक्टोबर) कधी व कशी करावी?",
+        "hi": "महाराष्ट्र में अंगूर की फाउंडेशन छंटाई (खरड छाटणी) और फल छंटाई (गोडीबहार छाटणी) कब और कैसे करें?"
+      },
+      "answer": {
+        "en": "In Maharashtra (Nashik, Sangli, Solapur, Pune), grapevines follow a double-pruning cycle:\n1. Foundation Pruning (Kharad Chatani — April): Cut canes back to 1-2 basal buds after harvest to grow new fruitful canes.\n2. Fruit Pruning (Godi Bahar Chatani — October to mid-November): Prune matured canes at 7-10 buds depending on variety (Thompson, Sonaka, Manik Chaman, 2A Clone) and sub-cane knot position. Apply Hydrogen Cyanamide (Dormex) @ 1.5-2% on top 5-6 buds for uniform sprouting within 12-16 days.",
+        "mr": "महाराष्ट्रात द्राक्ष बागेत वर्षातून दोनदा छाटणी केली जाते:\n१. खरड छाटणी (एप्रिल): माल तुटल्यानंतर काड्या १-२ डोळ्यांवर (पोंगा ठेवून) छाटाव्यात, जेणेकरून पुढील हंगामासाठी सशक्त काड्या तयार होतात.\n२. गोडीबहार छाटणी (ऑक्टोबर ते मध्य नोव्हेंबर): पक्व काड्या जात व सबकेनच्या गाठीनुसार ७ ते १० डोळ्यांवर छाटाव्यात. एकसारखी फूट निघण्यासाठी पुढील ५-६ डोळ्यांवर हायड्रोजन सायनामाइड (डॉर्मेक्स) १.५ ते २% पेस्टिंग करावे.",
+        "hi": "महाराष्ट्र में अंगूर में दोहरी छंटाई प्रणाली अपनाई जाती है:\n1. फाउंडेशन छंटाई (खरड छाटणी — अप्रैल): फसल कटाई के बाद टहनियों को 1-2 कलियों पर काटें ताकि नई स्वस्थ शाखाएं बनें।\n2. फल छंटाई (गोडीबहार — अक्टूबर से मध्य नवंबर): परिपक्व शाखाओं को किस्म के अनुसार 7-10 कलियों पर काटें और एकसमान अंकुरण के लिए ऊपरी 5-6 कलियों पर हाइड्रोजन सायनामाइड (डोरमेक्स) 1.5-2% लगाएं।"
+      }
+    },
+    {
+      "id": "faq_cane_maturity_kharad",
+      "category": "pruning",
+      "question": {
+        "en": "How do I achieve good cane maturity (Kadi Pakvata) after foundation pruning?",
+        "mr": "खरड छाटणीनंतर द्राक्ष बागेत चांगली काडी पक्वता मिळण्यासाठी कोणती फवारणी व खत नियोजन करावे?",
+        "hi": "फाउंडेशन छंटाई के बाद अंगूर की शाखाओं की अच्छी परिपक्वता (काडी पक्वता) कैसे प्राप्त करें?"
+      },
+      "answer": {
+        "en": "For uniform cane maturity (60-120 days after foundation pruning):\n1. Stop nitrogen (Urea/19:19:19) completely after 45 days.\n2. Pinch shoot tips (shenda pinching) at 5 leaves past the sub-cane knot (5+5+3 leaf architecture) and remove axillary side shoots (bagal).\n3. Foliar sprays: Spray 00:52:34 @ 500 g to 1 kg + 00:00:50 (SOP) @ 500 g in 200 L water/acre every 8-10 days.\n4. Drip fertigation: Apply 00:52:34 @ 5 kg/acre followed by 00:00:50 @ 5 kg/acre weekly, and slightly reduce irrigation to induce wood browning from the base.",
+        "mr": "खरड छाटणीनंतर ६० ते १२० दिवसांत उत्तम काडी पक्वतेसाठी:\n१. ४५ दिवसांनंतर नत्रयुक्त खते (युरिया) पूर्णपणे बंद करा.\n२. सबकेन नंतर ५ पानांवर शेंडा पिंचिंग करा (५+५+३ पान पद्धत) व बगल फुटी काढा.\n३. फवारणी: ०:५२:३४ (५०० ग्रॅम ते १ किलो) + ०:००:५० (५०० ग्रॅम) प्रति २०० लीटर पाण्यातून ८-१० दिवसांच्या अंतराने फवारा.\n४. ड्रिपद्वारे ०:५२:३४ आणि ०:००:५० एकरी ५ किलो आठवड्यातून द्या व पाण्याचा हलका ताण देऊन तळाकडून काडी दुधाळ-तपकिरी होऊ द्या.",
+        "hi": "फाउंडेशन छंटाई के बाद 60-120 दिनों में शाखा परिपक्वता के लिए:\n1. 45 दिनों के बाद नाइट्रोजन (यूरिया) पूरी तरह बंद कर दें।\n2. सब-केन के बाद 5 पत्तों पर शेंडा पिंचिंग करें और बगल फुटाव हटाएं।\n3. छिड़काव: 00:52:34 (500 ग्राम-1 किलो) + 00:00:50 (500 ग्राम) प्रति 200 लीटर पानी में हर 8-10 दिन पर छिड़कें।\n4. ड्रिप से 00:52:34 और 00:00:50 @ 5 किलो/एकर दें और पानी थोड़ा कम करें।"
+      }
+    },
+    {
+      "id": "faq_sprout_delay_godi_bahar",
+      "category": "pruning",
+      "question": {
+        "en": "What should I do if buds are not sprouting 14-16 days after pruning?",
+        "mr": "छाटणी होऊन १४-१६ दिवस झाले तरी बाग फुटत नाहीये, लवकर व एकसारखी फूट निघण्यासाठी काय करावे?",
+        "hi": "छंटाई के 14-16 दिन बाद भी अंगूर की कलियां नहीं फूट रही हैं, तो क्या उपाय करें?"
+      },
+      "answer": {
+        "en": "If bud break is delayed 14-16 days after pruning due to low temperature or dry conditions:\n1. Run drip irrigation heavily to create moist field capacity (wafsa) in the root zone and give Ammonium Sulphate @ 5-10 kg/acre or 19:19:19 @ 5 kg/acre + Humic Acid @ 1 L/acre through drip.\n2. Spray plain water on canes morning and afternoon to soften bud scales.\n3. Foliar spray Seaweed Extract (Algamitz) @ 400 ml + Urea @ 500 g in 200 L water/acre.",
+        "mr": "छाटणीनंतर १४-१६ दिवस होऊनही बाग फुटत नसल्यास:\n१. ठिबकने भरपूर पाणी देऊन मुळांच्या कक्षेत चांगला वाफसा तयार करा व ड्रिपद्वारे अमोनियम सल्फेट ५-१० किलो किंवा १९:१९:१९ (५ किलो) + ह्युमिक अॅसिड १ लीटर एकरी सोडा.\n२. डोळ्यांवरील कापूस मऊ होण्यासाठी सकाळी व दुपारी काड्यांवर साध्या पाण्याची फवारणी करा.\n३. सीवीड अर्क (अल्गामीट्स) ४०० मि.ली. + युरिया ५०० ग्रॅम + पाणी २०० लीटर फवारा.",
+        "hi": "यदि छंटाई के 14-16 दिन बाद भी कलियां नहीं फूट रही हैं:\n1. ड्रिप से पर्याप्त पानी देकर जड़ क्षेत्र में नमी बनाएं और अमोनियम सल्फेट 5-10 किलो या 19:19:19 (5 किलो) + ह्यूमिक एसिड 1 लीटर प्रति एकड़ ड्रिप से दें।\n2. कलियों को नरम करने के लिए सुबह और दोपहर सादे पानी का स्प्रे करें।\n3. सीवीड अर्क 400 मिली + यूरिया 500 ग्राम प्रति 200 लीटर पानी का छिड़काव करें।"
+      }
+    },
+    {
+      "id": "faq_recut_basal_dose",
+      "category": "fertilizer",
+      "question": {
+        "en": "What is the recommended basal fertilizer dose (Basal Dose) before recut or foundation pruning?",
+        "mr": "रिकट किंवा खरड/गोडी छाटणीपूर्वी बेसल डोस व शेणखत किती आणि कसे टाकावे?",
+        "hi": "रिकट या छंटाई से पहले अंगूर में बेसल खाद की खुराक और गोबर खाद कितनी और कैसे डालें?"
+      },
+      "answer": {
+        "en": "15-20 days before pruning/recut, open a shallow trench beside the drip line without damaging major feeder roots and apply per acre:\n- Well-decomposed FYM (Shenkhat): 8-10 Metric Tonnes\n- Single Super Phosphate (SSP): 250 kg\n- Bentonite / Agricultural Sulfur: 25-30 kg\n- 18:46:00 (DAP) or 10:26:26: 50 kg\n- Sulphate of Potash (SOP 00:00:50): 30 kg\n- Magnesium Sulphate (MgSO4): 20-25 kg\nCover the trench with soil and sugarcane trash/mulch, then irrigate thoroughly.",
+        "mr": "छाटणी किंवा रिकटच्या १५-२० दिवस आधी ड्रिपखाली मुळी जास्त न तोडता हलके चर घेऊन एकरी खालीलप्रमाणे बेसल डोस टाकावा:\n- चांगले कुजलेले शेणखत: ८ ते १० मेट्रिक टन\n- सिंगल सुपर फॉस्फेट (SSP): २५० किलो\n- बेन्टोनाईट सल्फर / गंधक: २५ ते ३० किलो\n- १८:४६:०० (DAP) किंवा १०:२६:२६: ५० किलो\n- सल्फेट ऑफ पोटॅश (SOP ०:००:५०): ३० किलो\n- मॅग्नेशियम सल्फेट: २० ते २५ किलो\nवरती माती व उसाच्या पाचटाचे आच्छादन करून भरपूर पाणी द्यावे.",
+        "hi": "छंटाई या रिकट से 15-20 दिन पहले ड्रिप लाइन के पास हल्की नाली बनाकर प्रति एकड़ निम्नलिखित बेसल डोज डालें:\n- सड़ी हुई गोबर की खाद: 8-10 मीट्रिक टन\n- सिंगल सुपर फॉस्फेट (SSP): 250 किलो\n- सल्फर: 25-30 किलो\n- 18:46:00 (DAP) या 10:26:26: 50 किलो\n- सल्फेट ऑफ पोटाश (SOP): 30 किलो\n- मैग्नीशियम सल्फेट: 20-25 किलो\nमिट्टी और मल्चिंग से ढककर अच्छी सिंचाई करें।"
+      }
+    },
+    {
+      "id": "faq_npk_fertigation",
+      "category": "fertilizer",
+      "question": {
+        "en": "What is the stage-wise NPK fertigation schedule for grapes?",
+        "mr": "द्राक्ष बागेसाठी वाढीच्या टप्प्यानुसार NPK विद्राव्य खतांचे (ड्रिप) वेळापत्रक काय आहे?",
+        "hi": "अंगूर के लिए वृद्धि चरण के अनुसार NPK फर्टिगेशन (ड्रिप खाद) शेड्यूल क्या है?"
+      },
+      "answer": {
+        "en": "Recommended soluble NPK drip schedule per acre for bearing grapevines:\n1. Sprouting to 25 days (Vegetative growth): Urea @ 5 kg + 19:19:19 @ 5 kg weekly + Phosphoric Acid @ 2 L.\n2. Pre-bloom (25-40 days): 12:61:00 @ 5 kg + Magnesium Sulphate @ 5 kg + Boron @ 1 kg.\n3. Flowering & Fruit Set (40-55 days): 00:52:34 @ 5 kg + Zinc/Ferrous chelate @ 500 g.\n4. Berry Development / Sizing (55-90 days): 13:00:45 @ 5-8 kg + Calcium Nitrate @ 5 kg + MgSO4 @ 5 kg weekly.\n5. Veraison to Harvest (90-120 days): 00:00:50 (SOP) @ 5-8 kg weekly for sugar (Brix), luster, and color. Stop nitrogen completely.",
+        "mr": "फळधारणा होणाऱ्या द्राक्ष बागेसाठी एकरी विद्राव्य खत (ड्रिप) नियोजन:\n१. फूट ते २५ दिवस (वाढीचा काळ): युरिया ५ किलो + १९:१९:१९ (५ किलो) + फॉस्फोरिक अॅसिड २ लीटर.\n२. फुलोऱ्यापूर्वी (२५-४० दिवस): १२:६१:०० (५ किलो) + मॅग्नेशियम सल्फेट ५ किलो + बोरॉन १ किलो.\n३. फुलोरा व सेटिंग (४०-५५ दिवस): ०:५२:३४ (५ किलो) + चिलेटेड झिंक/फेरस ५०० ग्रॅम.\n४. मणी फुगवण (५५-९० दिवस): १३:००:४५ (५-८ किलो) + कॅल्शियम नायट्रेट ५ किलो + मॅग्नेशियम सल्फेट ५ किलो.\n५. मणी पाणी उतरणे ते काढणी (९०-१२० दिवस): गोडी व रंगासाठी ०:००:५० (SOP) ५-८ किलो द्यावे, नत्र पूर्ण बंद करावे.",
+        "hi": "फलत वाली अंगूर बाग के लिए प्रति एकड़ ड्रिप NPK शेड्यूल:\n1. अंकुरण से 25 दिन: यूरिया 5 किलो + 19:19:19 (5 किलो) + फॉस्फोरिक एसिड 2 लीटर।\n2. फूल आने से पहले (25-40 दिन): 12:61:00 (5 किलो) + मैग्नीशियम सल्फेट 5 किलो + बोरोन 1 किलो।\n3. फूल और फल सेटिंग (40-55 दिन): 00:52:34 (5 किलो) + चिलेटेड जिंक/आयरन 500 ग्राम।\n4. दाना विकास (55-90 दिन): 13:00:45 (5-8 किलो) + कैल्शियम नाइट्रेट 5 किलो + मैग्नीशियम सल्फेट 5 किलो।\n5. पकने की अवस्था (90-120 दिन): मिठास और चमक के लिए 00:00:50 (SOP) 5-8 किलो दें और नाइट्रोजन बंद रखें।"
+      }
+    },
+    {
+      "id": "faq_drip_irrigation",
+      "category": "irrigation",
+      "question": {
+        "en": "What is the drip irrigation water schedule for grapevines across growth stages?",
+        "mr": "द्राक्ष बागेत छाटणीनंतर आणि विविध अवस्थांमध्ये ठिबक सिंचनाने पाणी किती तास व किती लीटर द्यावे?",
+        "hi": "अंगूर की बाग में विभिन्न विकास चरणों में ड्रिप सिंचाई से कितना पानी देना चाहिए?"
+      },
+      "answer": {
+        "en": "Water requirement per vine per day (assuming 8 LPH discharge per vine):\n- Day 1-15 post-pruning: Heavy initial irrigation for wafsa, then 8-10 L/vine/day.\n- Pre-bloom (Day 20-35): 10-12 L/vine/day.\n- Flowering & Berry Set (Day 38-50): Moderate water (6-8 L/vine/day) — avoid excess water to prevent flower drop (kujva/gal).\n- Berry Sizing (Day 55-95): Peak water demand — 15-22 L/vine/day; never allow moisture stress.\n- Ripening (Day 100+): Reduce to 6-8 L/vine/day to prevent berry cracking, and stop 5-7 days before harvest.",
+        "mr": "द्राक्ष वेलीची प्रतिदिन पाण्याची गरज (जमिनीचा मगदूर व वाफसा पाहून):\n- छाटणीनंतर १ ते १५ दिवस: सुरुवातीला मुळी चालू होण्यासाठी चांगला वाफसा करून ८-१० लीटर/वेल/दिवस.\n- फुलोऱ्यापूर्वी (२०-३५ दिवस): १०-१२ लीटर/वेल/दिवस.\n- फुलोरा व सेटिंग (३८-५० दिवस): मर्यादित पाणी (६-८ लीटर/वेल) — अतिरिक्त पाण्यामुळे गळ व कुजवा होऊ शकतो.\n- मणी फुगवण (५५-९५ दिवस): सर्वाधिक गरज — १५ ते २२ लीटर/वेल/दिवस; पाण्याचा ताण बसू देऊ नका.\n- काढणीपूर्वी (१००+ दिवस): मणी तडकू नयेत म्हणून पाणी कमी करून ६-८ लीटर द्या व तोडणीपूर्वी ५-७ दिवस बंद करा.",
+        "hi": "प्रति बेल प्रतिदिन पानी की आवश्यकता (मिट्टी की नमी अनुसार):\n- छंटाई के 1-15 दिन: अच्छी नमी (वाफसा) बनाकर 8-10 लीटर/बेल/दिन।\n- फूल से पहले (20-35 दिन): 10-12 लीटर/बेल/दिन।\n- फूल और सेटिंग (38-50 दिन): सीमित पानी (6-8 लीटर/बेल) — अधिक पानी से फूल झड़ सकते हैं।\n- दाना फुलाव (55-95 दिन): सर्वाधिक आवश्यकता — 15-22 लीटर/बेल/दिन।\n- पकने पर (100+ दिन): दाने फटने से बचाने के लिए 6-8 लीटर/बेल करें और कटाई से 5-7 दिन पहले बंद करें।"
+      }
+    },
+    {
+      "id": "faq_mealybug",
+      "category": "pest",
+      "question": {
+        "en": "How do I control mealybug (Pithya Dhekun) infestation on grape trunks and bunches?",
+        "mr": "द्राक्ष बागेतील मिलीबग (पिठ्या ढेकूण) नियंत्रणासाठी कोणती आळवणी व फवारणी करावी?",
+        "hi": "अंगूर में मिलीबग (पिठ्या कीट) के नियंत्रण के लिए कौन सा ड्रेंचिंग और स्प्रे करें?"
+      },
+      "answer": {
+        "en": "Integrated Mealybug (Maconellicoccus hirsutus) Control:\n1. Sanitation: Remove loose bark after April pruning and swab trunks with Dichlorvos or Chlorpyrifos 20% EC @ 2 ml/L.\n2. Soil/Root Drench: Imidacloprid 17.8% SL @ 300 ml/acre or Clothianidin (Dantotsu) @ 100 g/acre through drip.\n3. Systemic Foliar Spray: Spirotetramat + Imidacloprid (Movento Energy) @ 200-250 ml/200 L water (take as a standalone spray) OR Buprofezin 25% SC @ 1.5-2 ml/L.\n4. Biocontrol: Release Cryptolaemus montrouzieri beetles @ 1500/acre and spray Verticillium lecanii @ 5 g/L in humid periods.",
+        "mr": "द्राक्षातील मिलीबग (पिठ्या ढेकूण) नियंत्रण:\n१. स्वच्छता: खरड छाटणीनंतर खोडावरील सैल साल काढून खोड क्लोरपायरीफॉस २०% EC (२ मि.ली./लीटर) ने धुवून घ्या.\n२. ड्रिप/आळवणी: इमिडाक्लोप्रिड १७.८% SL ३०० मि.ली./एकर किंवा डॅन्टोत्सु (क्लोथियानिडिन) १०० ग्रॅम/एकर ठिबकद्वारे सोडा.\n३. फवारणी: मोव्हेन्टो एनर्जी (स्पायरोटेट्रामॅट + इमिडाक्लोप्रिड) २००-२५० मि.ली./२०० लीटर पाणी (स्वतंत्र फवारणी घ्या) किंवा ब्युप्रोफेझिन २५% SC १.५-२ मि.ली./लीटर फवारा.\n४. जैविक उपाय: क्रिप्टोलेमस भुंगे सोडा व आर्द्र हवामानात व्हर्टिसिलियम लेकॅनी ५ ग्रॅम/लीटर वापरा.",
+        "hi": "अंगूर में मिलीबग नियंत्रण:\n1. स्वच्छता: अप्रैल छंटाई के बाद तने की ढीली छाल हटाकर क्लोरपाइरीफॉस 20% EC (2 मिली/लीटर) से तना धोएं।\n2. ड्रिप ड्रेंचिंग: इमिडाक्लोप्रिड 17.8% SL 300 मिली/एकर या क्लोथियानिडिन (डैंटोट्सु) 100 ग्राम/एकर ड्रिप से दें।\n3. छिड़काव: मोवेंटो एनर्जी 200-250 मिली/200 लीटर पानी (अलग से स्प्रे करें) या ब्यूप्रोफेज़िन 25% SC 1.5-2 मिली/लीटर छिड़कें।\n4. जैविक नियंत्रण: क्रिप्टोलीमस भृंग छोड़ें और वर्टिसिलियम लेकैनी 5 ग्राम/लीटर का प्रयोग करें।"
+      }
+    },
+    {
+      "id": "faq_thrips_udya",
+      "category": "pest",
+      "question": {
+        "en": "What should I spray for thrips, jassids, and flea beetle (Udya) on new shoots and berries?",
+        "mr": "नवीन फुटींवर आणि घडांवर थ्रिप्स (फुलकिडे), तुडतुडे व उडद्या किडीसाठी कोणता स्प्रे घ्यावा?",
+        "hi": "नई कोपलों और गुच्छों पर थ्रिप्स, तेला और उडद्या भृंग के लिए कौन सा स्प्रे करें?"
+      },
+      "answer": {
+        "en": "Thrips cause leaf curling and corky scab marks on berries, while flea beetles (Udya) bore into sprouting buds:\n1. For Flea Beetle (Udya) at sprouting: Spray Lambda-cyhalothrin 5% EC (Karate) @ 150-200 ml OR Slayer Pro @ 125 ml OR Fipronil 80% WG (Jump) @ 40 g in 200 L water/acre in the evening.\n2. For Thrips on shoots/flowering: Spray Spinosad 45% SC (Tracer) @ 50 ml OR Spinetoram 11.7% SC (Delegate) @ 100 ml OR Emamectin Benzoate 5% SG @ 100 g in 200 L water/acre.\n3. Install blue/yellow sticky traps @ 20 traps/acre.",
+        "mr": "नवीन फुटी व घडांवरील थ्रिप्स आणि उडद्या नियंत्रण:\n१. फुटवे निघताना उडद्यासाठी: सायंकाळी लॅम्बडा-सायहॅलोथ्रिन (कराटे) १५०-२०० मि.ली. किंवा स्लेअर प्रो १२५ मि.ली. किंवा फिप्रोनिल ८०% WG (जम्प) ४० ग्रॅम प्रति २०० लीटर पाण्यातून फवारा.\n२. थ्रिप्ससाठी (शेंडे व फुलोरा अवस्था): स्पिनोसॅड ४५% SC (ट्रेसर) ५० मि.ली. किंवा डेलीगेट १०० मि.ली. किंवा इमामेक्टिन बेंझोएट १०० ग्रॅम प्रति २०० लीटर पाण्यातून सायंकाळी फवारा.\n३. बागेत एकरी २० निळे व पिवळे चिकट सापळे लावा.",
+        "hi": "नई शाखाओं और गुच्छों पर थ्रिप्स और उडद्या कीट नियंत्रण:\n1. अंकुरण के समय उडद्या के लिए: शाम को लैम्ब्डा-साइहैलोथ्रिन (कराटे) 150-200 मिली या स्लेयर प्रो 125 मिली या फिप्रोनिल 80% WG (जम्प) 40 ग्राम प्रति 200 लीटर पानी में छिड़कें।\n2. थ्रिप्स के लिए: स्पिनोसैड 45% SC (ट्रेसर) 50 मिली या डेलीगेट 100 मिली या इमामेक्टिन बेंजोएट 100 ग्राम प्रति 200 लीटर पानी में शाम को स्प्रे करें।\n3. प्रति एकड़ 20 नीले और पीले चिपचिपे ट्रैप लगाएं।"
+      }
+    },
+    {
+      "id": "faq_ga3_berry_sizing",
+      "category": "growth_regulator",
+      "question": {
+        "en": "How should I use GA3 (Gibberellic Acid) and CPPU for rachis elongation and berry sizing?",
+        "mr": "घड लांबण्यासाठी आणि मण्यांची फुगवण/साईज मिळण्यासाठी GA3 आणि CPPU ची फवारणी/डिपिंग कशी करावी?",
+        "hi": "गुच्छे की लंबाई बढ़ाने और अंगूर के दानों का आकार (फुगवण) बढ़ाने के लिए GA3 और CPPU का उपयोग कैसे करें?"
+      },
+      "answer": {
+        "en": "Standard GA3 & CPPU schedule for seedless table grapes (adjust per variety):\n1. Pre-bloom rachis elongation (Parrot green stage, Day 22-28): 1st GA3 @ 10 ppm (2 g in 200 L water) + Seaweed @ 200 ml; 2nd GA3 @ 15 ppm (3 g in 200 L) after 4-5 days. Maintain solution pH at 5.5-6.0 using citric acid.\n2. Flower thinning (50% cap fall): GA3 @ 20-25 ppm.\n3. Berry sizing (3-4 mm berry size): GA3 @ 30-40 ppm + CPPU @ 1-1.5 ml/L (e.g., 100-150 ml CPPU + Carbendazim/Bavistin 200 g + 00:52:34 500 g in 200 L water).\n4. Second dipping (6-8 mm berry size): GA3 @ 40 ppm + 6-BA @ 10 ppm for final berry elongation and weight.",
+        "mr": "द्राक्ष घड लांबणी व मणी फुगवणीसाठी GA3 आणि CPPU नियोजन:\n१. घड लांबणी (पोपटी अवस्था, २२-२८ दिवस): पहिला GA3 १० ppm (२ ग्रॅम/२०० लीटर पाणी) आणि ४-५ दिवसांनी दुसरा GA3 १५ ppm (३ ग्रॅम/२०० लीटर). द्रावणाचा pH सायट्रिक अॅसिडने ५.५ ते ६.० राखावा.\n२. फुलोरा विरळणी (५०% कॅपफॉल): GA3 २०-२५ ppm.\n३. पहिली फुगवण डिपिंग/स्प्रे (३-४ मिमी मणी साईज): GA3 ३०-४० ppm + CPPU १०० मि.ली. + बाविस्टीन २०० ग्रॅम + ०:५२:३४ (५०० ग्रॅम) प्रति २०० लीटर पाणी.\n४. दुसरी डिपिंग (६-८ मिमी साईज): GA3 ४० ppm + ६-BA १० ppm.",
+        "hi": "अंगूर के गुच्छे लंबा करने और दानों के फुलाव के लिए GA3 और CPPU शेड्यूल:\n1. प्री-ब्लूम गुच्छा लंबाई (22-28 दिन): पहला GA3 10 ppm (2 ग्राम/200 लीटर) और 4-5 दिन बाद दूसरा GA3 15 ppm (3 ग्राम/200 लीटर)। साइट्रिक एसिड से pH 5.5-6.0 रखें।\n2. फूल विरलीकरण (50% कैपफॉल): GA3 20-25 ppm।\n3. पहली डिपिंग (3-4 मिमी दाना आकार): GA3 30-40 ppm + CPPU 100 मिली + बाविस्टिन 200 ग्राम + 00:52:34 (500 ग्राम) प्रति 200 लीटर पानी।\n4. दूसरी डिपिंग (6-8 मिमी आकार): GA3 40 ppm + 6-BA 10 ppm।"
+      }
+    },
+    {
+      "id": "faq_leaf_yellowing_kalokhi",
+      "category": "fertilizer",
+      "question": {
+        "en": "Leaves are turning yellowish and small after pruning — what spray gives dark green luster (kalokhi) and leaf expansion?",
+        "mr": "बागेच्या पानांची साईज कमी आहे व शेंडे पिवळसर पडत आहेत, पानांना काळोखी व साईज येण्यासाठी कोणता स्प्रे घ्यावा?",
+        "hi": "छंटाई के बाद पत्तियां पीली और छोटी रह रही हैं, पत्तियों का आकार और गहरा हरापन बढ़ाने के लिए क्या स्प्रे करें?"
+      },
+      "answer": {
+        "en": "Leaf yellowing (interveinal chlorosis) and small leaf size are typically caused by Iron, Magnesium, and Zinc deficiency in calcareous soils or excess soil moisture:\n1. Foliar Spray (per 200 L water/acre): Chelated Combi Micronutrient (Combi-fert) @ 150-200 g + Magnesium Sulphate (MgSO4) @ 500 g + Seaweed Extract (Algamitz) @ 400 ml + Mancozeb (M-45) @ 500 g.\n2. Drip Application: Apply Chelated Ferrous (EDDHA Fe) @ 1 kg/acre + Magnesium Sulphate @ 10 kg/acre + 24:24:00 or 19:19:19 @ 5 kg/acre.",
+        "mr": "पानांचा पिवळेपणा दूर करून पानांची साईज व काळोखी वाढवण्यासाठी:\n१. फवारणी (प्रति २०० लीटर पाणी): चिलेटेड मायक्रोन्युट्रियंट (कॉम्बी फर्ट) १५०-२०० ग्रॅम + मॅग्नेशियम सल्फेट ५०० ग्रॅम + अल्गामीट्स (सीवीड) ४०० मि.ली. + M-45 (५०० ग्रॅम) असा स्प्रे घ्या.\n२. ड्रिप नियोजन: चिलेटेड फेरस (लोह) १ किलो + मॅग्नेशियम सल्फेट १० किलो + १९:१९:१९ किंवा २४:२४:०० एकरी ५ किलो वाफसा पाहून द्यावे.",
+        "hi": "पत्तियों का पीलापन दूर करने और आकार व गहरा हरा रंग लाने के लिए:\n1. छिड़काव (प्रति 200 लीटर पानी): चिलेटेड कॉम्बी माइक्रोन्यूट्रिएंट 150-200 ग्राम + मैग्नीशियम सल्फेट 500 ग्राम + सीवीड अर्क (अल्गामीट्स) 400 मिली + M-45 (500 ग्राम) का स्प्रे करें।\n2. ड्रिप से: चिलेटेड आयरन (फेरस) 1 किलो + मैग्नीशियम सल्फेट 10 किलो + 19:19:19 (5 किलो) प्रति एकड़ दें।"
+      }
+    },
+    {
+      "id": "faq_bordeaux_mixture",
+      "category": "disease",
+      "question": {
+        "en": "How do I prepare and safely spray 0.5% or 1% Bordeaux mixture in a grape vineyard?",
+        "mr": "द्राक्ष बागेसाठी ०.५% किंवा १% बोर्डो मिश्रण कसे तयार करावे आणि फवारताना कोणती काळजी घ्यावी?",
+        "hi": "अंगूर की बाग के लिए 0.5% या 1% बोर्डो मिश्रण कैसे तैयार करें और छिड़काव में क्या सावधानी रखें?"
+      },
+      "answer": {
+        "en": "To prepare 100 Liters of 1% Bordeaux Mixture (for 0.5%, halve the quantities to 500 g each):\n1. Dissolve 1 kg Copper Sulphate (Morchud) in 50 L water in a plastic bucket.\n2. Dissolve 1 kg Quicklime (Kali Chuna) in another 50 L water in a second plastic drum.\n3. Slowly pour both solutions simultaneously into a third plastic barrel while stirring continuously.\n4. pH / Iron Test: Dip a clean iron nail or blade into the mixture for 2 minutes — if reddish copper deposits form on the blade, add more lime solution until neutral (pH 7.0). Spray fresh on the same day without mixing any chemical pesticides.",
+        "mr": "१०० लीटर १% बोर्डो मिश्रण तयार करण्याची पद्धत (०.५% साठी ५०० ग्रॅम मोरचूद + ५०० ग्रॅम चुना घ्यावा):\n१. प्लास्टिकच्या भांड्यात १ किलो मोरचूद ५० लीटर पाण्यात विरघळवून घ्या.\n२. दुसऱ्या प्लास्टिक ड्रममध्ये १ किलो कळीचा चुना ५० लीटर पाण्यात निवळून व गाळून घ्या.\n३. तिसऱ्या प्लास्टिक बॅरलमध्ये दोन्ही द्रावणे एकाच वेळी धार धरून लाकडी काठीने ढवळत एकत्र करा.\n४. चाचणी: मिश्रणात लोखंडी खिळा किंवा ब्लेड २ मिनिटे बुडवा; त्यावर तांबूस थर आल्यास मिश्रण आम्लधर्मी आहे — अशा वेळी अजून चुन्याचे निवळी पाणी टाकून pH ७.० करावा. बोर्डो नेहमी ताजे व स्वतंत्र फवारावे.",
+        "hi": "100 लीटर 1% बोर्डो मिश्रण बनाने की विधि (0.5% के लिए 500 ग्राम कॉपर सल्फेट + 500 ग्राम चूना लें):\n1. प्लास्टिक बर्तन में 1 किलो कॉपर सल्फेट (नीला थोथा) 50 लीटर पानी में घोलें।\n2. दूसरे प्लास्टिक ड्रम में 1 किलो कली चूना 50 लीटर पानी में घोलकर छान लें।\n3. तीसरे प्लास्टिक ड्रम में दोनों घोल को एक साथ लकड़ी से हिलाते हुए मिलाएं।\n4. परीक्षण: लोहे की कील या ब्लेड 2 मिनट डुबोएं; यदि लाल परत दिखे तो थोड़ा और चूने का पानी मिलाकर pH 7.0 करें। इसे ताजा और अकेले ही छिड़कें।"
+      }
+    },
+    {
+      "id": "faq_calcareous_soil_red_soil",
+      "category": "general",
+      "question": {
+        "en": "How should I manage calcareous black soil (chunkhadi soil) and use red soil or sulfur for grape planting?",
+        "mr": "चुनखडीयुक्त काळ्या जमिनीत द्राक्ष बाग लावताना लाल माती, सल्फर आणि कॅल्शियम नायट्रेटचा वापर कसा करावा?",
+        "hi": "चूनायुक्त (चुनखडी) काली मिट्टी में अंगूर की बाग लगाने और प्रबंधन के लिए लाल मिट्टी व सल्फर का उपयोग कैसे करें?"
+      },
+      "answer": {
+        "en": "Calcareous black soil has high pH (>8.0) and free lime, which locks up Iron, Zinc, and Phosphorus:\n1. Red Soil Amendment: Add 1 to 1.5 trolleys of porous, slightly acidic red soil per planting trench/pit (approx. 400-500 trolleys/acre) mixed with 8-10 tonnes FYM and 30 kg elemental sulfur.\n2. Drip Management: Use Phosphoric Acid or Sulfuric Acid periodically to clean laterals and lower rhizosphere pH.\n3. Compatibility Tip: When applying Chelated Copper through drip, wait 15-20 minutes and flush with water before running Calcium Nitrate.",
+        "mr": "चुनखडीयुक्त काळ्या जमिनीचा pH जास्त (>८.०) असल्याने लोह, झिंक व स्फुरद अडकून पडतात:\n१. लाल मातीचा वापर: लाल माती हलकी, सच्छिद्र व आम्लधर्मी असल्याने मुळांना हवा व निचरा मिळतो. प्रत्येक खड्ड्यासाठी १ ते १.५ ट्रॉली लाल माती + शेणखत + एकरी ३० किलो सल्फर वापरावे.\n२. ड्रिप नियोजन: जमिनीचा pH नियंत्रित ठेवण्यासाठी फॉस्फोरिक अॅसिड किंवा सल्फ्यूरिक अॅसिडचा योग्य वापर करावा.\n३. महत्त्वाची टीप: ड्रिपने चिलेटेड कॉपर दिल्यानंतर १५ मिनिटे पाणी सोडून मगच कॅल्शियम नायट्रेट सोडावे.",
+        "hi": "चूनायुक्त काली मिट्टी का pH अधिक (>8.0) होने से आयरन, जिंक और फास्फोरस लॉक हो जाते हैं:\n1. लाल मिट्टी का प्रयोग: लाल मिट्टी हल्की और छिद्रपूर्ण होती है जो जड़ों को ऑक्सीजन व जल निकासी देती है। प्रति गड्ढा 1-1.5 ट्रॉली लाल मिट्टी + गोबर खाद + 30 किलो/एकर सल्फर मिलाएं।\n2. ड्रिप सावधानी: ड्रिप से चिलेटेड कॉपर देने के 15 मिनट बाद ही कैल्शियम नाइट्रेट चलाएं।"
+      }
+    },
+    {
+      "id": "faq_unseasonal_rain_spray",
+      "category": "disease",
+      "question": {
+        "en": "It rained unexpectedly in the vineyard — what emergency spray should I take immediately?",
+        "mr": "बागेत सकाळी किंवा रात्री अचानक पाऊस झाला आहे, डाऊनी व करपा टाळण्यासाठी तातडीने कोणती फवारणी घ्यावी?",
+        "hi": "बाग में अचानक बेमौसम बारिश हुई है, डाउनी और करपा रोग से बचाव के लिए तुरंत कौन सा स्प्रे करें?"
+      },
+      "answer": {
+        "en": "Immediately after unseasonal rainfall, shake excess water off clusters/canopy and spray within 6-12 hours (per 200 L water/acre):\n1. Vegetative / Recut / Cane Maturity stage: Spray Saaf (Carbendazim + Mancozeb) @ 400 g + 00:52:34 @ 500 g OR Tilt (Propiconazole) @ 20 ml + Blue Copper @ 500 g.\n2. Pre-bloom / Flowering stage: Spray Curzate M8 @ 400 g OR Acrobat @ 200 g + M-45 @ 400 g (or Kasugamycin + Copper Hydroxide if bacterial blight risk is high).",
+        "mr": "अवकाळी पाऊस झाल्यानंतर पानांवरील पाणी सुकताच ६-१२ तासांत (प्रति २०० लीटर पाणी) तातडीची फवारणी घ्यावी:\n१. खरड छाटणी / रिकट / काडी पक्वता अवस्था: साफ ४०० ग्रॅम + ०:५२:३४ (५०० ग्रॅम) किंवा टिल्ट २० मि.ली. + ब्लू कॉपर ५०० ग्रॅम फवारा.\n२. गोडी छाटणी / पोंगा ते फुलोरा अवस्था: कर्झेट M8 (४०० ग्रॅम) किंवा अॅक्रोबॅट २०० ग्रॅम + M-45 (४०० ग्रॅम) किंवा मणी करपा टाळण्यासाठी कोनिका ३०० ग्रॅम एकरी फवारा.",
+        "hi": "बेमौसम बारिश के तुरंत बाद पत्तियों का पानी सूखते ही 6-12 घंटे के भीतर (प्रति 200 लीटर पानी) छिड़काव करें:\n1. वानस्पतिक / रिकट अवस्था: साफ 400 ग्राम + 00:52:34 (500 ग्राम) या टिल्ट 20 मिली + ब्लू कॉपर 500 ग्राम छिड़कें।\n2. फूल / फल अवस्था: कर्जेट M8 (400 ग्राम) या एक्रोबैट 200 ग्राम + M-45 (400 ग्राम) या कोनिका 300 ग्राम/एकर का छिड़काव करें।"
+      }
+    },
+    {
+      "id": "faq_berry_mummification_drop",
+      "category": "disease",
+      "question": {
+        "en": "Why are grape berry stalks turning black and berries shriveling (mummification) during development?",
+        "mr": "द्राक्ष मण्यांचे देठ काळे पडून मणी सुकण्याचे (ममीफिकेशन) प्रमाण वाढले आहे, यावर कारणे व उपाय काय?",
+        "hi": "अंगूर के दानों के डंठल काले पड़कर दाने सूखने (ममीफिकेशन) क्यों लग रहे हैं और इसका क्या उपाय है?"
+      },
+      "answer": {
+        "en": "Berry mummification (pedicel necrosis and berry shriveling) is caused by:\n1. Calcium, Magnesium, and Potassium deficiency during rapid berry growth.\n2. Irregular irrigation (alternating water stress and over-irrigation) or excess nitrogen.\n3. Heavy crop load per vine.\nControl Measures:\n- Thin excess bunches and clip cluster tips to balance vine load.\n- Foliar spray: Chelated Calcium @ 200 g + Chelated Magnesium @ 200 g + 00:52:34 or 00:00:50 @ 500 g in 200 L water.\n- Drip: Apply Calcium Nitrate @ 5 kg/acre + MgSO4 @ 5 kg/acre and maintain consistent moisture.",
+        "mr": "ममीफिकेशन (मण्यांचे देठ काळे पडणे व मणी सुकून जाणे) होण्याची कारणे व उपाय:\nकारणे: १. कॅल्शियम, मॅग्नेशियम व पोटॅशची कमतरता. २. पाण्याचा असमतोल वापर व नत्राचा अतिवापर. ३. वेलीवर घडांचा अतिरिक्त लोड.\nउपाय:\n- वेलीवरील जास्तीचे घड व घडाचा शेंडा कमी करून लोड नियंत्रित करा.\n- फवारणी: चिलेटेड कॅल्शियम २०० ग्रॅम + चिलेटेड मॅग्नेशियम २०० ग्रॅम + ०:००:५० (५०० ग्रॅम) प्रति २०० लीटर पाण्यातून फवारा.\n- ड्रिपने कॅल्शियम नायट्रेट ५ किलो + मॅग्नेशियम सल्फेट ५ किलो द्या व नियमित वाफसा ठेवा.",
+        "hi": "ममीफिकेशन (डंठल काला पड़ना और दाने सूखना) के कारण और उपाय:\nकारण: 1. कैल्शियम, मैग्नीशियम और पोटाश की कमी। 2. असंतुलित सिंचाई और अधिक नाइट्रोजन। 3. बेल पर अत्यधिक फसल भार।\nउपाय:\n- अतिरिक्त गुच्छों की छंटाई कर फसल भार संतुलित करें।\n- छिड़काव: चिलेटेड कैल्शियम 200 ग्राम + चिलेटेड मैग्नीशियम 200 ग्राम + 00:00:50 (500 ग्राम) प्रति 200 लीटर पानी में छिड़कें।\n- ड्रिप से कैल्शियम नाइट्रेट 5 किलो + मैग्नीशियम सल्फेट 5 किलो प्रति एकड़ दें।"
+      }
+    }
+  ]
+}

@@ -14,13 +14,17 @@ __pycache__/
 .env
 .env.local
 
-# Databases and data
+# Databases and raw training image data
 *.db
 *.db-shm
 *.db-wal
 *.sqlite
-data/
+/data/
+model/data/
+!backend/data/
+!backend/data/*.json
 uploads/
+.ralph-tui/
 
 # OS/Editor
 .DS_Store
@@ -30,3 +34,5 @@ uploads/
 # Firebase
 firebase-service-account.json
 data.zip
+*.zip
+

@@ -1,7 +1,7 @@
 /**
  * api.js — Axios Client for Grape Master Backend
  * ════════════════════════════════════════════════
- * Attaches the JWT token (stored in localStorage after firebase-verify)
+ * Attaches the farmer JWT (`gm_jwt`) or admin JWT (`gm_admin_jwt`)
  * to every request automatically via a request interceptor.
  */
 
@@ -14,9 +14,32 @@ export const api = axios.create({
   timeout: 30000, // 30s — LLM calls can take time
 });
 
-// ── Request interceptor: attach JWT bearer token ──────────────────
+// ── Token helpers ─────────────────────────────────────────────────
+
+export function getFarmerToken() {
+  return localStorage.getItem('gm_jwt');
+}
+
+export function clearJWT() {
+  localStorage.removeItem('gm_jwt');
+}
+
+export function setAdminToken(token) {
+  localStorage.setItem('gm_admin_jwt', token);
+}
+
+export function getAdminToken() {
+  return localStorage.getItem('gm_admin_jwt');
+}
+
+export function clearAdminToken() {
+  localStorage.removeItem('gm_admin_jwt');
+}
+
+// ── Request interceptor: attach appropriate JWT bearer token ──────
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('gm_jwt');
+  const isAdminRoute = config.url?.startsWith('/api/admin');
+  const token = isAdminRoute ? getAdminToken() : getFarmerToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -39,33 +62,74 @@ api.interceptors.response.use(
  * Exchange a Firebase ID token for our own backend JWT.
  * Also stores the JWT in localStorage for subsequent requests.
  */
-export async function verifyFirebaseToken(idToken, preferredLanguage = 'en') {
-  const res = await api.post('/api/auth/firebase-verify', { idToken, preferredLanguage });
+export async function verifyFirebaseToken(idToken, preferredLanguage = 'en', name = null) {
+  const res = await api.post('/api/auth/firebase-verify', { idToken, preferredLanguage, name });
   if (res.data.success && res.data.token) {
     localStorage.setItem('gm_jwt', res.data.token);
   }
   return res.data;
 }
 
-export function clearJWT() {
-  localStorage.removeItem('gm_jwt');
+/**
+ * Authenticate an admin/expert account against POST /api/admin/login.
+ * Stores the returned JWT under `gm_admin_jwt` (separate from farmer token).
+ */
+export async function adminLogin(email, password) {
+  const res = await api.post('/api/admin/login', { email, password });
+  if (res.data?.token) {
+    setAdminToken(res.data.token);
+  }
+  return res.data;
 }
 
-// ── Chat helpers ──────────────────────────────────────────────────
+// ── Chat & Multilingual helpers ───────────────────────────────────
 
 /**
- * Send a chat message (text + optional image file) to the backend.
+ * Send a chat message (text + optional image file + active UI language) to the backend.
  * Returns { answer, diagnosis, confidence, conversationId, ... }
  */
-export async function sendChatMessage({ text, imageFile, conversationId }) {
+export async function sendChatMessage({ text, imageFile, conversationId, language }) {
   const formData = new FormData();
   if (text)           formData.append('text', text);
   if (conversationId) formData.append('conversationId', conversationId);
   if (imageFile)      formData.append('image', imageFile);
+  if (language)       formData.append('language', language);
 
   const res = await api.post('/api/chat', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+  return res.data;
+}
+
+/**
+ * Update the active language for an existing conversation (mid-session switch).
+ */
+export async function updateConversationLanguage(conversationId, language) {
+  const res = await api.patch(`/api/conversations/${conversationId}/language`, { language });
+  return res.data;
+}
+
+/**
+ * Update farmer preferences (preferredLanguage, region).
+ */
+export async function updatePreferences({ preferredLanguage, region }) {
+  const res = await api.patch('/api/auth/preferences', { preferredLanguage, region });
+  return res.data;
+}
+
+/**
+ * Translate an array of dynamic strings into targetLanguage ('en'|'hi'|'mr') via Gemini.
+ */
+export async function translateTexts(texts, targetLanguage) {
+  const res = await api.post('/api/translate', { texts, targetLanguage });
+  return res.data.translations;
+}
+
+/**
+ * Real-time grammar, spelling & typo check for farmer chat input while typing.
+ */
+export async function checkQueryNlp(text, language = 'en') {
+  const res = await api.post('/api/nlp/check', { text, language });
   return res.data;
 }
 
@@ -100,12 +164,20 @@ export async function getAdminMetrics() {
   return res.data.metrics;
 }
 
-export async function getReviewQueue() {
+export async function getPendingReviews() {
   const res = await api.get('/api/admin/review-queue');
   return res.data.queue || [];
 }
 
+// Alias for backwards compatibility
+export const getReviewQueue = getPendingReviews;
+
 export async function submitReview({ queueId, correctedAnswer, status }) {
   const res = await api.post('/api/admin/review', { queueId, correctedAnswer, status });
+  return res.data;
+}
+
+export async function exportRetrainingCsv() {
+  const res = await api.get('/api/admin/export', { responseType: 'blob' });
   return res.data;
 }

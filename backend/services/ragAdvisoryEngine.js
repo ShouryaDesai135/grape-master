@@ -1,123 +1,152 @@
 /**
  * ragAdvisoryEngine.js — Complete RAG Orchestration
  * ═════════════════════════════════════════════════
- * 
- * Orchestrates the full pipeline:
- * 1. Intent & Language analysis
- * 2. Vector Embedding of user query
- * 3. Semantic Search over knowledge base
- * 4. LLM Synthesis of natural language response
- * 5. Confidence scoring & escalation flagging
+ *
+ * Pipeline:
+ *  1. NLP: normalize -> language detection -> follow-up resolution -> glossary expansion
+ *  2. Embed (multilingual) + intent classification
+ *  3. Hybrid retrieval (BM25 + vectors, RRF) with farmer-context nudges
+ *  4. Calibrated confidence (retrieval) fused with image certainty
+ *  5. Safety rules (dose must be present for dosage questions)
+ *  6. LLM synthesis grounded ONLY on retrieved chunks
+ *
+ * Two numbers are reported separately so the UI can explain them:
+ *   imageConfidence  - calibrated CNN certainty (only when a photo was sent)
+ *   ragConfidence    - probability that retrieved context answers the question
+ * finalConfidence drives escalation to the expert review queue.
  */
 
 import { generateEmbedding } from './embeddingEngine.js';
-import { semanticSearch } from './vectorStore.js';
-import { synthesizeResponse } from './llmSynthesizer.js';
-import { detectLanguage } from './languageDetector.js';
+import { hybridSearch, retrievalConfidence } from './vectorStore.js';
+import { synthesizeResponse, rewriteFollowUp } from './llmSynthesizer.js';
+import { normalizeText, scrubPii, correctGrammarAndSpelling, expandQuery, detectLanguage, classifyIntent, tokenize } from './nlp.js';
 
 const CONFIDENCE_THRESHOLD = parseFloat(process.env.CONFIDENCE_THRESHOLD || '0.75');
+const DOSE_INTENTS = new Set(['treatment', 'fertilizer', 'growth_regulator', 'pest']);
 
 /**
- * Process a user query through the complete RAG pipeline.
- * 
- * @param {string} userQuery - The raw input from the farmer
- * @param {Array} conversationContext - Previous turns in this session
- * @param {Object} cnnResult - Optional image diagnosis results { prediction, confidence }
- * @returns {Object} { answer, language, ragConfidence, finalConfidence, flagged, intent }
+ * Rule-based follow-up resolution: very short messages ("what dose?", "organic option?")
+ * inherit the topic of the last farmer turn. LLM rewrite is tried first when available.
  */
-export async function processRagQuery(userQuery, conversationContext = [], cnnResult = null, explicitLanguage = null) {
+async function resolveFollowUp(query, conversationContext) {
+  if (!conversationContext.length) return query;
+  const shortQuery = tokenize(query).length <= 4;
+  if (!shortQuery) return query;
+
+  const llmRewrite = await rewriteFollowUp(query, conversationContext);
+  if (llmRewrite) return llmRewrite;
+
+  const lastFarmerTurn = [...conversationContext].reverse().find((t) => t.role === 'farmer' && t.canonical);
+  return lastFarmerTurn ? `${lastFarmerTurn.canonical} ${query}` : query;
+}
+
+/**
+ * @param {string} userQuery
+ * @param {Array}  conversationContext previous turns in this session
+ * @param {Object} cnnResult optional { prediction, confidence, alternatives }
+ * @param {string} explicitLanguage UI language preference
+ * @param {Object} farmerContext optional { variety, pruningType, stage, daysAfterPruning, region }
+ */
+export async function processRagQuery(userQuery, conversationContext = [], cnnResult = null, explicitLanguage = null, farmerContext = {}) {
   const startTime = Date.now();
 
-  // 1. Language Detection & Normalization
-  const { language: detectedLanguage, intent } = detectLanguage(userQuery || '');
-  const language = explicitLanguage || detectedLanguage;
+  // 1. NLP: PII scrubbing -> spell/typo & grammar correction -> language detection
+  const privacySafeQuery = scrubPii(normalizeText(userQuery || ''));
+  const nlpCheck = correctGrammarAndSpelling(privacySafeQuery, explicitLanguage);
+  const cleanQuery = nlpCheck.corrected;
+  const detected = nlpCheck.detectedLanguage || detectLanguage(cleanQuery);
 
-  // 2. Build Effective Query for Embedding
-  // If an image was uploaded and user query is short/empty, include the CNN prediction in vector search
-  let effectiveQuery = userQuery ? userQuery.trim() : '';
-  if (cnnResult && cnnResult.prediction && effectiveQuery.length < 5) {
-    const diseaseName = cnnResult.prediction.replace(/_/g, ' ');
-    effectiveQuery = `${diseaseName} symptoms treatment and prevention`;
+  // If the farmer typed in Devanagari (Marathi/Hindi) while UI dropdown was left on 'en',
+  // respect the script of the farmer's actual query (PDF §2 Accurate Language Detection).
+  let language = explicitLanguage || detected.language;
+  if (detected.script === 'devanagari' && detected.confidence >= 0.60 && (!explicitLanguage || explicitLanguage === 'en')) {
+    language = detected.language;
   }
 
-  // 3. Embed the Query
-  const queryVector = await generateEmbedding(effectiveQuery || 'grape disease advisory');
+  // 2. Effective query: resolve follow-ups, add leaf CNN disease (only when subject is a grape leaf!), expand glossary
+  let effectiveQuery = cleanQuery.length ? await resolveFollowUp(cleanQuery, conversationContext) : '';
+  const isLeafDiagnosis = cnnResult?.prediction && (!cnnResult.subjectType || cnnResult.subjectType === 'grape_leaf') && !cnnResult.notLeaf;
+  if (isLeafDiagnosis) {
+    const diseaseName = String(cnnResult.prediction).replace(/_/g, ' ');
+    effectiveQuery = effectiveQuery.length < 5
+      ? `${diseaseName} symptoms treatment and prevention`
+      : `${diseaseName} ${effectiveQuery}`;
+  } else if (cnnResult?.subjectType && effectiveQuery.length < 5) {
+    const defaultSubjectQueries = {
+      grape_berries: 'grape berry bunch sizing cracking rot management',
+      insect_pest: 'grape thrips mealybug flea beetle pest control',
+      soil: 'grape vineyard soil management basal fertilizer irrigation',
+    };
+    effectiveQuery = defaultSubjectQueries[cnnResult.subjectType] || '';
+  }
+  effectiveQuery = expandQuery(effectiveQuery);
 
-  let retrievedChunks = [];
-  let vectorSimilarityScore = 0;
+  // 3. Embed + intent
+  const queryVector = effectiveQuery ? await generateEmbedding(effectiveQuery) : null;
+  const intentResult = await classifyIntent(cleanQuery || effectiveQuery, queryVector);
 
-  // 4. Semantic Vector Search
+  // 4. Hybrid retrieval
+  let chunks = [];
+  let features = { vec: 0, coverage: 0, margin: 0, bm25: 0 };
   if (queryVector) {
-    retrievedChunks = semanticSearch(queryVector, { topK: 3, language });
-    
-    if (retrievedChunks.length === 0) {
-      retrievedChunks = semanticSearch(queryVector, { topK: 3 });
-    }
-
-    if (retrievedChunks.length > 0) {
-      vectorSimilarityScore = retrievedChunks[0].similarity;
-    }
+    ({ chunks, features } = hybridSearch(queryVector, {
+      topK: 3,
+      queryText: effectiveQuery,
+      language,
+      context: { variety: farmerContext.variety, stage: farmerContext.pruningType },
+    }));
   }
 
-  // 5. Calculate Confidence Scores
-  let ragConfidence = vectorSimilarityScore;
-  let keywordMatchScore = calculateKeywordScore(effectiveQuery, retrievedChunks);
-  
-  let finalConfidence = (0.6 * ragConfidence) + (0.4 * keywordMatchScore);
+  // 5. Confidence
+  const ragConfidence = chunks.length ? retrievalConfidence(features) : 0;
+  const keywordMatchScore = features.coverage;
+  const imageConfidence = cnnResult && cnnResult.confidence != null ? cnnResult.confidence : null;
 
-  // Fuse with CNN confidence if an image was provided
-  if (cnnResult && cnnResult.confidence != null) {
-    // If vision model is confident (>= 0.70), weight Vision 60% + RAG Vector 40%
-    if (cnnResult.confidence >= 0.70) {
-      finalConfidence = (0.60 * cnnResult.confidence) + (0.40 * Math.max(ragConfidence, 0.75));
-    } else {
-      finalConfidence = (0.40 * cnnResult.confidence) + (0.35 * ragConfidence) + (0.25 * keywordMatchScore);
-    }
+  let finalConfidence = ragConfidence;
+  if (imageConfidence != null) {
+    finalConfidence = (0.45 * imageConfidence) + (0.35 * ragConfidence) + (0.20 * keywordMatchScore);
+  }
+  finalConfidence = Math.min(Math.max(finalConfidence, 0), 0.99);
+
+  // 6. Safety: dosage-type questions need a number in the retrieved answer; non-leaf / triage photos always escalate
+  let safetyEscalation = false;
+  if (DOSE_INTENTS.has(intentResult.intent) && chunks.length && !/\d/.test(chunks[0].answer)) {
+    finalConfidence = Math.min(finalConfidence, CONFIDENCE_THRESHOLD - 0.01);
+    safetyEscalation = true;
+  }
+  if (cnnResult?.needsFollowUp || cnnResult?.notLeaf) {
+    finalConfidence = Math.min(finalConfidence, CONFIDENCE_THRESHOLD - 0.05);
+    safetyEscalation = true;
   }
 
-  // Cap at 0.99
-  finalConfidence = Math.min(Math.max(finalConfidence, 0.60), 0.99);
-  
   const isFlagged = finalConfidence < CONFIDENCE_THRESHOLD;
 
-  // 5. LLM Synthesis
-  // Synthesize natural language from retrieved chunks and cnn diagnosis
+  // 7. LLM synthesis (grounded, using grammar-corrected query for clarity)
   const answer = await synthesizeResponse(
-    userQuery, 
-    retrievedChunks, 
-    language, 
-    conversationContext, 
-    cnnResult
+    cleanQuery || userQuery || '',
+    chunks,
+    language,
+    conversationContext,
+    cnnResult,
+    farmerContext
   );
 
   return {
     answer,
     language,
+    languageDetected: detected.language,
+    correctedQuery: cleanQuery,
+    hasNlpChanges: nlpCheck.hasChanges,
+    nlpCorrections: nlpCheck.corrections,
     ragConfidence,
+    imageConfidence,
     finalConfidence,
     isFlagged,
-    intent,
-    responseTimeMs: Date.now() - startTime
+    safetyEscalation,
+    intent: intentResult.intent,
+    intentMethod: intentResult.method,
+    sources: chunks.map((c) => ({ id: c.id, source: c.source, category: c.category, similarity: Number(c.similarity.toFixed(3)) })),
+    features,
+    responseTimeMs: Date.now() - startTime,
   };
-}
-
-/**
- * Fallback keyword scoring metric.
- * Checks how many significant words from the query appear in the top chunk.
- */
-function calculateKeywordScore(query, chunks) {
-  if (chunks.length === 0) return 0;
-  
-  const topChunk = chunks[0];
-  const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-  if (queryWords.length === 0) return 0.5;
-
-  const targetText = `${topChunk.question} ${topChunk.answer}`.toLowerCase();
-  
-  let matchCount = 0;
-  for (const word of queryWords) {
-    if (targetText.includes(word)) matchCount++;
-  }
-
-  return matchCount / queryWords.length;
 }

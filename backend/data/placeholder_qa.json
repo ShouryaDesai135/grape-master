@@ -1,0 +1,82 @@
+[
+  {
+    "id": "q1",
+    "category": "disease",
+    "question_en": "What causes white powdery patches on my grape leaves?",
+    "answer_en": "This is Powdery Mildew, caused by the fungus Erysiphe necator. It thrives in warm, dry weather with high humidity at night. To treat it, spray Wettable Sulfur (80% WDG) at 2g per liter of water. Ensure proper canopy management to improve air circulation.",
+    "question_hi": "मेरे अंगूर के पत्तों पर सफेद पाउडर जैसे धब्बे क्यों आ रहे हैं?",
+    "answer_hi": "यह पाउडर फफूंदी (Powdery Mildew) है, जो एरीसिफे नेकेटर कवक के कारण होता है। इसके इलाज के लिए, पानी में 2 ग्राम प्रति लीटर के हिसाब से वेटेबल सल्फर (80% WDG) का छिड़काव करें। हवा के अच्छे प्रवाह के लिए कैनोपी (बेलों के पत्तों) को छांटना सुनिश्चित करें।",
+    "question_mr": "माझ्या द्राक्षाच्या पानांवर पांढरे पावडरसारखे डाग का दिसत आहेत?",
+    "answer_mr": "ही भुरी (Powdery Mildew) रोग आहे, जो एरिसीफे नेकेटर या बुरशीमुळे होतो. यावर उपाय म्हणून, प्रति लिटर पाण्यात 2 ग्रॅम या प्रमाणात वेटेबल सल्फर (80% WDG) फवारा. हवा खेळती राहण्यासाठी कॅनोपीचे योग्य व्यवस्थापन करा."
+  },
+  {
+    "id": "q2",
+    "category": "disease",
+    "question_en": "My grape leaves have yellow oily spots on top and white growth underneath. What should I do?",
+    "answer_en": "This is Downy Mildew, caused by Plasmopara viticola. It spreads quickly in rainy or highly humid conditions. You should immediately spray Metalaxyl 8% + Mancozeb 64% WP at 2.5g per liter of water. Remove and destroy severely infected leaves.",
+    "question_hi": "मेरे अंगूर के पत्तों के ऊपर पीले तेल जैसे धब्बे और नीचे सफेद फफूंद है। मुझे क्या करना चाहिए?",
+    "answer_hi": "यह डाउनी मिल्ड्यू (Downy Mildew) है। इसके इलाज के लिए तुरंत मेटलैक्सिल 8% + मैनकोजेब 64% WP का 2.5 ग्राम प्रति लीटर पानी में छिड़काव करें। गंभीर रूप से संक्रमित पत्तों को नष्ट कर दें।",
+    "question_mr": "माझ्या द्राक्षाच्या पानांवर पिवळे तेलकट डाग आणि खाली पांढरी बुरशी आहे. मी काय करावे?",
+    "answer_mr": "हा डाउनी मिल्ड्यू (केवडा) रोग आहे. यावर तातडीने मेटॅलॅक्सिल 8% + मॅन्कोझेब 64% WP हे बुरशीनाशक 2.5 ग्रॅम प्रति लिटर पाण्यात मिसळून फवारा. जास्त प्रादुर्भाव झालेली पाने काढून नष्ट करा."
+  },
+  {
+    "id": "q3",
+    "category": "fertilizer",
+    "question_en": "What is the best NPK fertilizer schedule during the vegetative growth phase?",
+    "answer_en": "During the vegetative growth phase (after foundation pruning), focus on Nitrogen. Apply 19:19:19 water-soluble fertilizer at 2-3 kg per acre through drip irrigation. Avoid excessive nitrogen as it may lead to heavy vegetative growth and increase susceptibility to diseases.",
+    "question_hi": "वानस्पतिक विकास चरण के दौरान सबसे अच्छा एनपीके उर्वरक कार्यक्रम क्या है?",
+    "answer_hi": "छंटाई के बाद वनस्पति विकास के दौरान, नाइट्रोजन पर ध्यान दें। ड्रिप सिंचाई के माध्यम से 19:19:19 पानी में घुलनशील उर्वरक 2-3 किलोग्राम प्रति एकड़ डालें। अत्यधिक नाइट्रोजन से बचें क्योंकि इससे बीमारियों का खतरा बढ़ सकता है।",
+    "question_mr": "वाढीच्या अवस्थेत कोणते NPK खत देणे योग्य ठरेल?",
+    "answer_mr": "छाटणीनंतरच्या वाढीच्या अवस्थेत, नायट्रोजनवर लक्ष केंद्रित करा. ठिबक सिंचनाद्वारे एकरी 2-3 किलो 19:19:19 हे विद्राव्य खत द्या. जास्त नायट्रोजन देणे टाळा, कारण यामुळे रोगांचा प्रादुर्भाव वाढू शकतो."
+  },
+  {
+    "id": "q4",
+    "category": "pruning",
+    "question_en": "When should I do the foundation pruning (back pruning) in Maharashtra?",
+    "answer_en": "In Maharashtra, foundation pruning (or back pruning) is typically done in April, right after the harvest. This pruning helps the vine build reserves and develop healthy canes for the next fruiting season.",
+    "question_hi": "महाराष्ट्र में फाउंडेशन प्रूनिंग (बैक प्रूनिंग) कब करनी चाहिए?",
+    "answer_hi": "महाराष्ट्र में, फाउंडेशन प्रूनिंग (या बैक प्रूनिंग) आमतौर पर अप्रैल में फसल कटाई के तुरंत बाद की जाती है। यह छंटाई बेल को अगले फलने वाले मौसम के लिए स्वस्थ टहनियां विकसित करने में मदद करती है।",
+    "question_mr": "महाराष्ट्रामध्ये फाउंडेशन प्रूनिंग (खरड छाटणी) कधी करावी?",
+    "answer_mr": "महाराष्ट्रामध्ये, खरड छाटणी साधारणपणे एप्रिल महिन्यात द्राक्ष काढणीनंतर लगेच केली जाते. यामुळे वेलीला पुढील हंगामासाठी मजबूत काड्या तयार करण्यास मदत होते."
+  },
+  {
+    "id": "q5",
+    "category": "disease",
+    "question_en": "There are black, sunken circular spots on my grapes and leaves. What disease is this?",
+    "answer_en": "This is Anthracnose (Bird's Eye Spot), caused by the fungus Elsinoe ampelina. It is very common during monsoon. Apply Bordeaux mixture (1%) or spray Thiophanate Methyl 70 WP at 1g per liter of water.",
+    "question_hi": "मेरे अंगूर और पत्तियों पर काले, धंसे हुए गोलाकार धब्बे हैं। यह कौन सी बीमारी है?",
+    "answer_hi": "यह एन्थ्रेक्नोज (Anthracnose) है, जो मानसून के दौरान बहुत आम है। 1% बोर्डो मिश्रण लगाएं या पानी में 1 ग्राम प्रति लीटर थियोफेनेट मिथाइल 70 WP का छिड़काव करें।",
+    "question_mr": "माझ्या द्राक्षांवर आणि पानांवर काळे, खोलगट गोल डाग आहेत. हा कोणता रोग आहे?",
+    "answer_mr": "हा करपा (Anthracnose) रोग आहे, जो पावसाळ्यात खूप सामान्य आहे. 1% बोर्डो मिश्रण (Bordeaux mixture) फवारा किंवा 1 ग्रॅम प्रति लिटर पाण्यात थायोफनेट मिथाइल 70 WP फवारा."
+  },
+  {
+    "id": "q6",
+    "category": "pest",
+    "question_en": "How can I control mealybugs in my vineyard?",
+    "answer_en": "To control mealybugs, use a strong jet of water to wash them off the stems. For chemical control, apply Buprofezin 25 SC at 1.25 ml per liter of water. Ensure ants are controlled, as they protect mealybugs from predators.",
+    "question_hi": "मैं अपने अंगूर के बाग में मिलीबग को कैसे नियंत्रित कर सकता हूँ?",
+    "answer_hi": "मिलीबग को नियंत्रित करने के लिए, उन्हें पानी की तेज धार से धो लें। रासायनिक नियंत्रण के लिए, बुप्रोफेज़िन 25 SC का 1.25 मिली प्रति लीटर पानी में छिड़काव करें। चींटियों को नियंत्रित करना सुनिश्चित करें, क्योंकि वे मिलीबग की रक्षा करती हैं।",
+    "question_mr": "मी माझ्या द्राक्ष बागेत पिठ्या ढेकूण (Mealybug) कसा नियंत्रित करू शकतो?",
+    "answer_mr": "पिठ्या ढेकूण नियंत्रित करण्यासाठी, पाण्याचा वेगवान फवारा मारून त्यांना खोडावरून धुवून काढा. रासायनिक नियंत्रणासाठी, बुप्रोफेझिन 25 SC हे 1.25 मिली प्रति लिटर पाण्यात फवारा. मुंग्यांचे नियंत्रण करा, कारण त्या पिठ्या ढेकणाचे संरक्षण करतात."
+  },
+  {
+    "id": "q7",
+    "category": "irrigation",
+    "question_en": "How much water do grapevines need during berry development?",
+    "answer_en": "During berry development, grapevines need optimal soil moisture, generally around 30-40 liters of water per vine per day through drip irrigation, depending on the soil type and temperature. Avoid waterlogging.",
+    "question_hi": "बेरी (अंगूर) विकास के दौरान बेलों को कितने पानी की आवश्यकता होती है?",
+    "answer_hi": "बेरी के विकास के दौरान, मिट्टी और तापमान के आधार पर ड्रिप सिंचाई के माध्यम से प्रति बेल प्रति दिन लगभग 30-40 लीटर पानी की आवश्यकता होती है। जलभराव से बचें।",
+    "question_mr": "मणी वाढीच्या अवस्थेत द्राक्ष वेलींना किती पाण्याची आवश्यकता असते?",
+    "answer_mr": "मणी वाढीच्या अवस्थेत, मातीचा प्रकार आणि तापमानानुसार ठिबक सिंचनाद्वारे एका वेलीला दररोज 30-40 लिटर पाण्याची आवश्यकता असते. बागेत पाणी साचू देऊ नका."
+  },
+  {
+    "id": "q8",
+    "category": "general",
+    "question_en": "What is the best rootstock for black cotton soils with high salt content?",
+    "answer_en": "For heavy black cotton soils with salinity issues, Dogridge rootstock is highly recommended. It has deep roots, tolerates drought and salinity well, and provides vigorous growth.",
+    "question_hi": "अधिक नमक वाली काली मिट्टी के लिए सबसे अच्छा रूटस्टॉक कौन सा है?",
+    "answer_hi": "अधिक नमक वाली भारी काली मिट्टी के लिए डाोगरिज (Dogridge) रूटस्टॉक की अत्यधिक सिफारिश की जाती है। यह सूखे और नमक को अच्छी तरह सहन करता है।",
+    "question_mr": "क्षारयुक्त काळ्या मातीसाठी कोणते रूटस्टॉक सर्वोत्तम आहे?",
+    "answer_mr": "क्षारयुक्त आणि भारी काळ्या मातीसाठी डॉगरिज (Dogridge) रूटस्टॉक वापरणे सर्वोत्तम मानले जाते. याची मुळे खोलवर जातात आणि ते क्षार आणि दुष्काळ चांगल्या प्रकारे सहन करते."
+  }
+]

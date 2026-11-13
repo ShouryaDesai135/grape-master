@@ -19,7 +19,7 @@ import {
   ChevronDown, ChevronRight
 } from 'lucide-react';
 import { translations } from '../utils/translations';
-import { sendChatMessage, submitFeedback, getConversations, getConversationMessages } from '../utils/api';
+import { sendChatMessage, submitFeedback, getConversations, getConversationMessages, checkQueryNlp } from '../utils/api';
 import { useAuth } from '../utils/useAuth';
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ function DiagnosisSection({ label, icon: Icon, color, content }) {
 }
 
 // ── Main Component ────────────────────────────────────────────────
-export default function ChatInterface({ currentLang, onOpenAuth }) {
+export default function ChatInterface({ currentLang, onOpenAuth, onConversationChange }) {
   const t = translations[currentLang];
   const { isLoggedIn, displayName } = useAuth();
 
@@ -71,9 +71,45 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
   const [showHistory, setShowHistory]   = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [apiError, setApiError]         = useState(null);
+  const [nlpSuggestion, setNlpSuggestion] = useState(null);
 
   const chatEndRef  = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Real-time debounced NLP grammar & spelling check while typing
+  useEffect(() => {
+    const trimmed = inputText.trim();
+    if (!trimmed || trimmed.length < 4) {
+      setNlpSuggestion(null);
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await checkQueryNlp(trimmed, currentLang);
+        if (!cancelled) {
+          if (res?.hasChanges && res.corrected && res.corrected !== trimmed) {
+            setNlpSuggestion(res);
+          } else {
+            setNlpSuggestion(null);
+          }
+        }
+      } catch {
+        // Non-blocking: ignore if offline
+      }
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [inputText, currentLang]);
+
+  const applyNlpSuggestion = () => {
+    if (nlpSuggestion?.corrected) {
+      setInputText(nlpSuggestion.corrected);
+      setNlpSuggestion(null);
+    }
+  };
 
   // Auto-scroll
   useEffect(() => {
@@ -98,9 +134,17 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
       // Reset on logout
       setMessages([]);
       setConversationId(null);
+      onConversationChange?.(null);
       setPastConvos([]);
     }
   }, [isLoggedIn]);
+
+  // Keep welcome message localized when language switches
+  useEffect(() => {
+    setMessages(prev =>
+      prev.map(m => (m.id === 'welcome' ? { ...m, text: t.heroSubtitle } : m))
+    );
+  }, [currentLang]);
 
   async function loadConversations() {
     try {
@@ -117,6 +161,7 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
     try {
       const result = await getConversationMessages(convoId);
       setConversationId(convoId);
+      onConversationChange?.(convoId);
       // Map DB messages to our display format
       const mapped = (result.messages || []).map(m => ({
         id: m.id,
@@ -200,6 +245,7 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
     const queryText = inputText;
     const queryImage = selectedImage;
     setInputText('');
+    setNlpSuggestion(null);
     setSelectedImage(null);
     setImagePreview(null);
     setIsLoading(true);
@@ -209,11 +255,13 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
         text: queryText,
         imageFile: queryImage,
         conversationId,
+        language: currentLang,
       });
 
       if (result.success) {
         if (!conversationId) {
           setConversationId(result.conversationId);
+          onConversationChange?.(result.conversationId);
           // Refresh sidebar conversations
           loadConversations();
         }
@@ -312,7 +360,7 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
 
             {/* New Chat */}
             <button
-              onClick={() => { setMessages([{ id: 'welcome', sender: 'bot', type: 'text', text: t.heroSubtitle, timestamp: now() }]); setConversationId(null); setShowHistory(false); }}
+              onClick={() => { setMessages([{ id: 'welcome', sender: 'bot', type: 'text', text: t.heroSubtitle, timestamp: now() }]); setConversationId(null); onConversationChange?.(null); setShowHistory(false); }}
               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all"
             >
               <RefreshCw className="w-3.5 h-3.5" /> New Conversation
@@ -519,6 +567,38 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
       {/* Input Dock */}
       <div className="fixed bottom-4 left-0 right-0 max-w-4xl mx-auto px-4 z-40">
 
+        {/* Live NLP Grammar & Spelling Suggestion Bar */}
+        {nlpSuggestion?.hasChanges && nlpSuggestion.corrected && (
+          <div className="mb-2 px-3.5 py-2 rounded-xl glass-card border border-emerald-500/40 bg-slate-950/90 flex flex-wrap items-center justify-between gap-2 text-xs animate-fadeIn shadow-lg">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <Sparkles className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <span className="text-slate-400 flex-shrink-0">
+                {currentLang === 'mr' ? 'व्याकरण / शब्द सुधारणा:' : currentLang === 'hi' ? 'व्याकरण / वर्तनी सुझाव:' : 'Grammar & spell fix:'}
+              </span>
+              <span className="text-emerald-300 font-semibold truncate" title={nlpSuggestion.corrected}>
+                “{nlpSuggestion.corrected}”
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button
+                type="button"
+                onClick={applyNlpSuggestion}
+                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold text-[11px] transition-all"
+              >
+                {currentLang === 'mr' ? 'वापरा (Tab)' : currentLang === 'hi' ? 'लागू करें (Tab)' : 'Apply (Tab)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setNlpSuggestion(null)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                title="Dismiss"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-2 p-2 rounded-xl glass-card border border-emerald-500/40 flex items-center justify-between w-fit gap-3 animate-fadeIn">
@@ -555,6 +635,12 @@ export default function ChatInterface({ currentLang, onOpenAuth }) {
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Tab' && nlpSuggestion?.hasChanges) {
+                e.preventDefault();
+                applyNlpSuggestion();
+              }
+            }}
             placeholder={isLoggedIn ? t.inputPlaceholder : 'Sign in to start chatting...'}
             disabled={!isLoggedIn}
             className="flex-1 bg-transparent text-white placeholder-slate-400 text-sm px-2 focus:outline-none disabled:opacity-50"

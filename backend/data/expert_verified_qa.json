@@ -1,0 +1,66 @@
+[
+  {
+    "reviewId": 24,
+    "question": "माझ्या द्राक्ष घडावर पांढरी बुरशी आली आहे कोणते औषध फवारावे?",
+    "answer": "घडावरील भुरीसाठी मायक्लोबुटानिल 10% WP @ 0.4 ग्रॅम/लिटर फवारावे.",
+    "language": "mr",
+    "category": "treatment",
+    "source": "expert_correction",
+    "reviewedAt": "2026-11-13 14:05:46",
+    "reviewer": "Agronomist"
+  },
+  {
+    "reviewId": 20,
+    "question": "माझ्या द्राक्ष घडावर पांढरी बुरशी आली आहे कोणते औषध फवारावे?",
+    "answer": "घडावरील भुरीसाठी मायक्लोबुटानिल 10% WP @ 0.4 ग्रॅम/लिटर फवारावे.",
+    "language": "mr",
+    "category": "treatment",
+    "source": "expert_correction",
+    "reviewedAt": "2026-11-06 15:30:11",
+    "reviewer": "Agronomist"
+  },
+  {
+    "reviewId": 19,
+    "question": "xyzzy_1793822943052 Mars rover telemetry orbital inclination",
+    "answer": "Verified agricultural expert guidance for retraining.",
+    "language": "en",
+    "category": "general_query",
+    "source": "expert_correction",
+    "reviewedAt": "2026-11-04 20:09:03",
+    "reviewer": "System Administrator"
+  },
+  {
+    "reviewId": 15,
+    "question": "my leaves have white powder, what do I spray?",
+    "answer": "Verified agricultural expert guidance for retraining.",
+    "language": "en",
+    "category": "disease_diagnosis",
+    "source": "expert_correction",
+    "reviewedAt": "2026-11-04 20:08:25",
+    "reviewer": "System Administrator"
+  },
+  {
+    "reviewId": 14,
+    "question": "xyzzy quantum superconducting qubit teleportation compiler",
+    "answer": "Verified agricultural expert guidance for retraining.",
+    "language": "en",
+    "category": "general_query",
+    "source": "expert_correction",
+    "reviewedAt": "2026-11-04 20:07:06",
+    "reviewer": "System Administrator"
+  },
+  {
+    "question": "what causes powdery mildew ?",
+    "answer": "This is Powdery Mildew, caused by the fungus Erysiphe necator. It thrives in warm, dry weather with high humidity at night. To treat it, spray Wettable Sulfur (80% WDG) at 2g per liter of water. Ensure proper canopy management to improve air circulation.",
+    "language": "en",
+    "category": "general_query",
+    "source": "positive_feedback"
+  },
+  {
+    "question": "Image uploaded for analysis.",
+    "answer": "🌿 **Leaf Diagnosis:** Our AI scanned your leaf image and detected **ESCA** with **100% confidence**.\n\n• 🔍 **Answer:** Monitor daily: check leaves for early spots. Maintain spray calendar. Keep vineyard floor clean. Soil test every season. Record-keeping of all spray applications and yields.",
+    "language": "hi",
+    "category": "general_query",
+    "source": "positive_feedback"
+  }
+]

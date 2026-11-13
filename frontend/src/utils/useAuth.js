@@ -6,7 +6,7 @@
  * for our own JWT, and exposes user + loading state globally.
  */
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { onAuthStateChanged, signOut, auth } from './firebase';
 import { verifyFirebaseToken, clearJWT } from './api';
 
@@ -67,7 +67,7 @@ export function AuthProvider({ children }) {
     photoURL: firebaseUser?.photoURL || null,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return React.createElement(AuthContext.Provider, { value }, children);
 }
 
 export function useAuth() {

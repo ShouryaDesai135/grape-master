@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-11-13T14:05:46.569Z",
+  "totalVerifiedQaPairs": 7,
+  "approvedExpertReviews": 5,
+  "positiveFeedbackPairs": 2,
+  "newlyEmbeddedChunks": 0,
+  "totalRelabeledImages": 2,
+  "relabeledImages": [
+    {
+      "reviewId": 20,
+      "originalPrediction": "Downy Mildew",
+      "originalConfidence": 0.48,
+      "correctedClass": "powdery_mildew",
+      "sourceImagePath": null,
+      "stagedImagePath": null,
+      "modelVersion": null
+    },
+    {
+      "reviewId": 24,
+      "originalPrediction": "Downy Mildew",
+      "originalConfidence": 0.48,
+      "correctedClass": "powdery_mildew",
+      "sourceImagePath": null,
+      "stagedImagePath": null,
+      "modelVersion": null
+    }
+  ]
+}

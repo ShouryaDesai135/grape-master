@@ -1,10 +1,10 @@
 /**
  * server.js — Grape Master Production API Gateway
  * ═══════════════════════════════════════════════
- * 
- * Express server exposing endpoints for farmer auth, chat, 
- * feedback, and admin dashboard. Initializes all ML models
- * (CNN + MiniLM) on startup.
+ *
+ * Express server exposing endpoints for farmer auth, chat,
+ * real-time NLP grammar/typo check, feedback, privacy/account management,
+ * and admin dashboard + continuous retraining.
  */
 
 import 'dotenv/config';
@@ -13,63 +13,123 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import multer from 'multer';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 
 // Database & Services
-import { initDatabase, getConversationsByFarmer, getConversationById, createConversation, insertMessage, getMessagesByConversation, updateConversationContext, updateConversationLanguage, updateFarmerPreferences, insertFeedback, addToReviewQueue, getAdminMetrics, getPendingReviews, submitReview, exportRetrainingDataset } from './database.js';
+import {
+  initDatabase,
+  findFarmerById,
+  deleteFarmerAndData,
+  getConversationsByFarmer,
+  getConversationById,
+  createConversation,
+  insertMessage,
+  getMessagesByConversation,
+  updateConversationContext,
+  updateConversationLanguage,
+  updateFarmerPreferences,
+  insertFeedback,
+  addToReviewQueue,
+  getAdminMetrics,
+  getPendingReviews,
+  getReviewedItems,
+  getReviewQueueItem,
+  submitReview,
+  revokeReview,
+  deleteQAByReviewQueueId,
+  exportRetrainingDataset,
+} from './database.js';
 import { verifyFirebaseToken, adminLogin } from './services/authService.js';
 import { authenticateFarmer, authenticateAdmin, authenticateAny } from './middleware/authMiddleware.js';
-import { initEmbeddingEngine } from './services/embeddingEngine.js';
-import { ingestPlaceholderData } from './services/dataIngestion.js';
-import { initLLM, translateTexts } from './services/llmSynthesizer.js';
-import { initVisionEngine, analyzeImage } from './services/visionEngine.js';
+import { initEmbeddingEngine, isEmbeddingReady, EMBEDDING_MODEL } from './services/embeddingEngine.js';
+import { ingestPlaceholderData, embedAndStore } from './services/dataIngestion.js';
+import { reloadVectorCache, getCacheSize } from './services/vectorStore.js';
+import { initLLM, translateTexts, getLLMInfo } from './services/llmSynthesizer.js';
+import {
+  initVisionEngine,
+  analyzeImage,
+  validateImageFile,
+  isVisionReady,
+  isSubjectGateReady,
+} from './services/visionEngine.js';
 import { processRagQuery } from './services/ragAdvisoryEngine.js';
+import { correctGrammarAndSpelling, scrubPii } from './services/nlp.js';
+import { isSupportedLanguage, getEnabledLanguages } from './config/languages.js';
+import { runRetrainingPipeline } from './scripts/retrain_pipeline.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ═══════════════════════════════════════════════════════════════
 // MIDDLEWARE & SECURITY
 // ═══════════════════════════════════════════════════════════════
 
-app.use(helmet({ crossOriginResourcePolicy: false })); // Allow serving static images locally
-app.use(cors({ origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : '*' }));
-app.use(express.json());
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'CHANGE_ME_IN_PRODUCTION' || process.env.JWT_SECRET === 'change_this_to_a_long_random_string') {
+    console.error('❌ FATAL: JWT_SECRET must be set to a strong secret in production.');
+    process.exit(1);
+  }
+}
+
+app.use(helmet({ crossOriginResourcePolicy: false }));
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : (process.env.NODE_ENV === 'production' ? [] : '*');
+app.use(cors({ origin: corsOrigins }));
+app.use(express.json({ limit: '1mb' }));
 
 // Rate Limiting
-const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 });
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10 });
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 250 });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 20 });
 app.use('/api/', apiLimiter);
 
 // File Uploads
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
 const upload = multer({
-  dest: path.join(__dirname, 'uploads/'),
+  dest: UPLOADS_DIR,
   limits: { fileSize: (process.env.MAX_IMAGE_SIZE_MB || 10) * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Only image files are allowed.'));
-  }
+  },
 });
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ═══════════════════════════════════════════════════════════════
-// AUTHENTICATION ENDPOINTS
+// HEALTH & READINESS PROBES (PDF §9 & §10)
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * POST /api/auth/firebase-verify
- * 
- * The frontend calls this after the user signs in via Firebase
- * (Email/Password or Google). It sends the Firebase ID Token here.
- * We verify it, create the farmer record if new, and return our own JWT.
- * 
- * Body: { idToken: string, preferredLanguage?: 'en'|'hi'|'mr' }
- */
+app.get('/health', (_req, res) => {
+  res.json({
+    status: 'ok',
+    uptimeSec: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/ready', (_req, res) => {
+  const ready = isEmbeddingReady() && getCacheSize() > 0;
+  res.status(ready ? 200 : 503).json({
+    ready,
+    embeddingEngine: { ready: isEmbeddingReady(), model: EMBEDDING_MODEL },
+    vectorStore: { chunksLoaded: getCacheSize() },
+    visionEngine: { leafCnnReady: isVisionReady(), clipSubjectGateReady: isSubjectGateReady() },
+    llm: getLLMInfo(),
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// AUTHENTICATION & PRIVACY ENDPOINTS
+// ═══════════════════════════════════════════════════════════════
+
 app.post('/api/auth/firebase-verify', authLimiter, async (req, res) => {
   const { idToken, preferredLanguage, name } = req.body;
   const result = await verifyFirebaseToken(idToken, preferredLanguage || 'en', name);
@@ -82,20 +142,81 @@ app.post('/api/admin/login', authLimiter, async (req, res) => {
 });
 
 app.get('/api/auth/me', authenticateAny, (req, res) => {
+  if (req.user.type === 'farmer') {
+    const farmer = findFarmerById(req.user.id);
+    if (farmer) {
+      return res.json({
+        success: true,
+        user: {
+          ...req.user,
+          preferredLanguage: farmer.preferred_language,
+          region: farmer.region,
+          variety: farmer.variety,
+          pruningType: farmer.pruning_type,
+          pruningDate: farmer.pruning_date,
+          consentGiven: Boolean(farmer.consent_given),
+        },
+      });
+    }
+  }
   res.json({ success: true, user: req.user });
 });
 
+app.patch('/api/auth/preferences', authenticateFarmer, (req, res) => {
+  const { preferredLanguage, region, variety, pruningType, pruningDate, consentGiven } = req.body || {};
+  if (preferredLanguage && !isSupportedLanguage(preferredLanguage)) {
+    return res.status(400).json({ success: false, error: 'Unsupported language' });
+  }
+  updateFarmerPreferences(req.user.id, {
+    preferredLanguage,
+    region,
+    variety,
+    pruningType,
+    pruningDate,
+    consentGiven,
+  });
+  const updated = findFarmerById(req.user.id);
+  res.json({
+    success: true,
+    preferences: {
+      preferredLanguage: updated?.preferred_language || preferredLanguage || 'en',
+      region: updated?.region || null,
+      variety: updated?.variety || null,
+      pruningType: updated?.pruning_type || null,
+      pruningDate: updated?.pruning_date || null,
+      consentGiven: Boolean(updated?.consent_given),
+    },
+  });
+});
+
+/**
+ * DELETE /api/auth/account
+ * Data Privacy Right-to-Erasure (PDF §10): deletes farmer profile, conversations,
+ * messages, feedback, and removes uploaded leaf/crop photos from disk.
+ */
+app.delete('/api/auth/account', authenticateFarmer, (req, res) => {
+  const imagePaths = deleteFarmerAndData(req.user.id);
+  let deletedFiles = 0;
+  for (const imgPath of imagePaths) {
+    if (imgPath && fs.existsSync(imgPath)) {
+      try {
+        fs.unlinkSync(imgPath);
+        deletedFiles++;
+      } catch { /* ignore */ }
+    }
+  }
+  res.json({ success: true, deletedImages: deletedFiles });
+});
+
 // ═══════════════════════════════════════════════════════════════
-// FARMER: CHAT & ADVISORY ENDPOINTS
+// FARMER: CHAT, NLP & ADVISORY ENDPOINTS
 // ═══════════════════════════════════════════════════════════════
 
-// Get all conversations for a farmer
 app.get('/api/conversations', authenticateFarmer, (req, res) => {
   const convos = getConversationsByFarmer(req.user.id);
   res.json({ success: true, conversations: convos });
 });
 
-// Get messages for a specific conversation
 app.get('/api/conversations/:id/messages', authenticateFarmer, (req, res) => {
   const convo = getConversationById(req.params.id);
   if (!convo || convo.farmer_id !== req.user.id) {
@@ -105,11 +226,27 @@ app.get('/api/conversations/:id/messages', authenticateFarmer, (req, res) => {
   res.json({ success: true, messages, language: convo.language });
 });
 
-// Mid-session language switch — keeps canonical_context intact
+app.get('/api/languages', (_req, res) => {
+  res.json({ success: true, languages: getEnabledLanguages() });
+});
+
+/**
+ * POST /api/nlp/check
+ * Real-time deterministic spelling, typo, and grammatical error check while typing (PDF §4).
+ */
+app.post('/api/nlp/check', (req, res) => {
+  const { text = '', language = 'en' } = req.body || {};
+  if (typeof text !== 'string' || text.length > 1000) {
+    return res.status(400).json({ success: false, error: 'Invalid text input' });
+  }
+  const result = correctGrammarAndSpelling(text, language);
+  res.json({ success: true, ...result });
+});
+
 app.patch('/api/conversations/:id/language', authenticateFarmer, (req, res) => {
   const { language } = req.body;
-  if (!['en', 'hi', 'mr'].includes(language)) {
-    return res.status(400).json({ success: false, error: 'Unsupported language. Use en, hi, or mr.' });
+  if (!isSupportedLanguage(language)) {
+    return res.status(400).json({ success: false, error: 'Unsupported language.' });
   }
   const convo = getConversationById(req.params.id);
   if (!convo || convo.farmer_id !== req.user.id) {
@@ -120,24 +257,10 @@ app.patch('/api/conversations/:id/language', authenticateFarmer, (req, res) => {
   res.json({ success: true, language });
 });
 
-app.patch('/api/auth/preferences', authenticateFarmer, (req, res) => {
-  const { preferredLanguage, region } = req.body;
-  if (preferredLanguage && !['en', 'hi', 'mr'].includes(preferredLanguage)) {
-    return res.status(400).json({ success: false, error: 'Unsupported language' });
-  }
-  updateFarmerPreferences(req.user.id, { preferredLanguage, region });
-  res.json({ success: true, preferredLanguage, region });
-});
-
-/**
- * POST /api/translate
- * Gemini-powered authentic translation for dynamic farmer-facing text.
- * Body: { texts: string[], targetLanguage: 'en'|'hi'|'mr' }
- */
 app.post('/api/translate', authenticateFarmer, async (req, res) => {
   try {
     const { texts, targetLanguage } = req.body;
-    if (!['en', 'hi', 'mr'].includes(targetLanguage)) {
+    if (!isSupportedLanguage(targetLanguage)) {
       return res.status(400).json({ success: false, error: 'Unsupported language' });
     }
     if (!Array.isArray(texts) || texts.length === 0) {
@@ -158,7 +281,7 @@ app.post('/api/translate', authenticateFarmer, async (req, res) => {
 app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, res) => {
   try {
     const { text, conversationId, language } = req.body;
-    const preferredLang = ['en', 'hi', 'mr'].includes(language) ? language : 'en';
+    const preferredLang = isSupportedLanguage(language) ? language : 'en';
     let convoId = conversationId;
     let convo = null;
     let cnnResult = null;
@@ -168,10 +291,20 @@ app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, re
       return res.status(400).json({ success: false, error: 'Text or image is required' });
     }
 
+    // Validate image magic bytes before saving or running inference
+    if (imagePath) {
+      const check = await validateImageFile(imagePath);
+      if (!check.valid) {
+        try { fs.unlinkSync(imagePath); } catch { /* ignore */ }
+        return res.status(400).json({ success: false, error: check.error });
+      }
+    }
+
     // 1. Resolve or Create Conversation
     if (convoId) {
       convo = getConversationById(convoId);
       if (!convo || convo.farmer_id !== req.user.id) {
+        if (imagePath) { try { fs.unlinkSync(imagePath); } catch { /* ignore */ } }
         return res.status(403).json({ success: false, error: 'Invalid conversation' });
       }
     } else {
@@ -179,32 +312,49 @@ app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, re
       createConversation({
         id: convoId,
         farmerId: req.user.id,
-        title: text ? text.substring(0, 30) : 'Image Diagnosis',
+        title: text ? scrubPii(text).substring(0, 40) : 'Image Diagnosis',
         language: preferredLang,
       });
       convo = getConversationById(convoId);
     }
 
-    // 2. Save Farmer's Message
+    // 2. Save Farmer's Message (PII-scrubbed for privacy compliance)
+    const safeText = scrubPii(text || '');
     const farmerMsgId = uuidv4();
     insertMessage({
       id: farmerMsgId,
       conversationId: convoId,
       sender: 'farmer',
-      content: text || '',
-      imagePath
+      content: safeText,
+      imagePath,
     });
 
-    // 3. Image Analysis (if uploaded)
+    // 3. Image Analysis (CLIP Subject Gate + 7-class Leaf CNN)
     if (imagePath) {
       cnnResult = await analyzeImage(imagePath);
     }
 
-    // 4. RAG — explicit UI language wins so mid-session switches are respected
-    const context = JSON.parse(convo.canonical_context || '{"turns":[]}');
-    const ragResult = await processRagQuery(text || '', context.turns || [], cnnResult, preferredLang);
+    // 4. Build Farmer Vineyard Context from profile
+    const farmer = findFarmerById(req.user.id);
+    let daysAfterPruning = null;
+    if (farmer?.pruning_date) {
+      const diff = Date.now() - new Date(farmer.pruning_date).getTime();
+      if (!Number.isNaN(diff) && diff >= 0) {
+        daysAfterPruning = Math.floor(diff / (1000 * 60 * 60 * 24));
+      }
+    }
+    const farmerContext = {
+      region: farmer?.region || null,
+      variety: farmer?.variety || null,
+      pruningType: farmer?.pruning_type || null,
+      daysAfterPruning,
+    };
 
-    // 5. Save Bot's Message
+    // 5. Run Hybrid RAG Pipeline
+    const context = JSON.parse(convo.canonical_context || '{"turns":[]}');
+    const ragResult = await processRagQuery(safeText, context.turns || [], cnnResult, preferredLang, farmerContext);
+
+    // 6. Save Bot's Message
     const botMsgId = uuidv4();
     insertMessage({
       id: botMsgId,
@@ -217,20 +367,22 @@ app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, re
       finalConfidence: ragResult.finalConfidence,
       isFlagged: ragResult.isFlagged,
       intent: ragResult.intent,
-      responseTimeMs: ragResult.responseTimeMs
+      responseTimeMs: ragResult.responseTimeMs,
+      modelVersion: cnnResult?.modelVersion || null,
+      cnnAlternatives: cnnResult?.alternatives || null,
     });
 
-    // 6. Canonical context preserves meaning across language switches
-    context.turns.push({ role: 'farmer', canonical: text || 'Uploaded image', language: preferredLang });
+    // 7. Canonical context preserves meaning across language switches
+    context.turns.push({ role: 'farmer', canonical: ragResult.correctedQuery || safeText || 'Uploaded image', language: ragResult.language });
     context.turns.push({ role: 'bot', canonical: ragResult.answer, confidence: ragResult.finalConfidence, language: ragResult.language });
-    updateConversationContext(convoId, context, preferredLang);
+    updateConversationContext(convoId, context, ragResult.language);
 
-    // 7. Auto-flag for review if low confidence
+    // 8. Auto-flag for review if low confidence
     if (ragResult.isFlagged) {
       addToReviewQueue({ messageId: botMsgId });
     }
 
-    // 8. Return combined response
+    // 9. Return combined response
     res.json({
       success: true,
       conversationId: convoId,
@@ -238,10 +390,15 @@ app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, re
       answer: ragResult.answer,
       diagnosis: cnnResult,
       confidence: ragResult.finalConfidence,
+      ragConfidence: ragResult.ragConfidence,
+      imageConfidence: ragResult.imageConfidence,
+      correctedQuery: ragResult.correctedQuery,
+      hasNlpChanges: ragResult.hasNlpChanges,
+      nlpCorrections: ragResult.nlpCorrections,
       isFlagged: ragResult.isFlagged,
-      language: ragResult.language
+      language: ragResult.language,
+      intent: ragResult.intent,
     });
-
   } catch (error) {
     console.error('❌ Chat API Error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -249,13 +406,17 @@ app.post('/api/chat', authenticateFarmer, upload.single('image'), async (req, re
 });
 
 app.post('/api/feedback', authenticateFarmer, (req, res) => {
-  const { messageId, rating } = req.body;
-  insertFeedback({ messageId, farmerId: req.user.id, rating: parseInt(rating, 10) });
-  
-  if (parseInt(rating, 10) === -1) {
-    addToReviewQueue({ messageId }); // Auto-flag downvoted answers
+  const { messageId, rating, comment } = req.body;
+  const numericRating = parseInt(rating, 10);
+  if (![-1, 1].includes(numericRating)) {
+    return res.status(400).json({ success: false, error: 'Rating must be 1 or -1' });
   }
-  
+  insertFeedback({ messageId, farmerId: req.user.id, rating: numericRating, comment: comment || null });
+
+  if (numericRating === -1) {
+    addToReviewQueue({ messageId });
+  }
+
   res.json({ success: true });
 });
 
@@ -263,47 +424,128 @@ app.post('/api/feedback', authenticateFarmer, (req, res) => {
 // ADMIN ENDPOINTS
 // ═══════════════════════════════════════════════════════════════
 
-app.get('/api/admin/metrics', authenticateAdmin(), (req, res) => {
+app.get('/api/admin/metrics', authenticateAdmin(), (_req, res) => {
   res.json({ success: true, metrics: getAdminMetrics() });
 });
 
-app.get('/api/admin/review-queue', authenticateAdmin(), (req, res) => {
+app.get('/api/admin/review-queue', authenticateAdmin(), (_req, res) => {
   res.json({ success: true, queue: getPendingReviews() });
 });
 
-app.post('/api/admin/review', authenticateAdmin(), (req, res) => {
+app.get('/api/admin/reviewed', authenticateAdmin(), (_req, res) => {
+  res.json({ success: true, reviewed: getReviewedItems(100) });
+});
+
+app.post('/api/admin/review', authenticateAdmin(), async (req, res) => {
   const queueId = req.body.queueId || req.body.id;
   const correctedAnswer = req.body.correctedAnswer;
   const status = req.body.status || (req.body.approved === false ? 'rejected' : 'approved');
+  const rejectReason = req.body.rejectReason || null;
+  const diagnosisWrong = Boolean(req.body.diagnosisWrong);
+  const correctedClass = req.body.correctedClass || null;
+
   if (!queueId) {
     return res.status(400).json({ success: false, error: 'queueId is required' });
   }
-  submitReview({ queueId, correctedAnswer, reviewedBy: req.user.id, status });
-  res.json({ success: true });
+  const queueItem = getReviewQueueItem(queueId);
+  submitReview({
+    queueId,
+    correctedAnswer,
+    reviewedBy: req.user.id,
+    status,
+    rejectReason,
+    diagnosisWrong,
+    correctedClass,
+  });
+
+  // Continuous learning loop: index approved expert corrections into qa_embeddings immediately
+  if (status === 'approved' && correctedAnswer && correctedAnswer.trim() && queueItem?.user_query) {
+    try {
+      const embedded = await embedAndStore({
+        question: queueItem.user_query,
+        answer: correctedAnswer.trim(),
+        language: queueItem.language || 'en',
+        category: 'expert_correction',
+        source: 'expert_correction',
+        reviewQueueId: Number(queueId),
+      });
+      if (embedded) reloadVectorCache();
+    } catch (err) {
+      console.error('⚠️ Could not embed expert correction:', err.message);
+    }
+  }
+
+  res.json({ success: true, status });
 });
 
-app.get('/api/admin/export', authenticateAdmin(['admin']), (req, res) => {
+/**
+ * POST /api/admin/review/:id/revoke
+ * Revoke a previously approved review and remove its vector from qa_embeddings.
+ */
+app.post('/api/admin/review/:id/revoke', authenticateAdmin(), (req, res) => {
+  const queueId = Number(req.params.id);
+  if (!queueId) {
+    return res.status(400).json({ success: false, error: 'Valid review ID is required' });
+  }
+  revokeReview({ queueId, reviewedBy: req.user.id });
+  deleteQAByReviewQueueId(queueId);
+  reloadVectorCache();
+  res.json({ success: true, revokedId: queueId, activeChunks: getCacheSize() });
+});
+
+/**
+ * POST /api/admin/retrain
+ * Trigger periodic retraining sync (merges expert corrections + positive feedback & stages CNN images).
+ */
+app.post('/api/admin/retrain', authenticateAdmin(), async (_req, res) => {
+  try {
+    const summary = await runRetrainingPipeline({ ensureEmbedder: true });
+    res.json({ success: true, summary });
+  } catch (err) {
+    console.error('❌ Retrain API Error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/admin/export', authenticateAdmin(['admin', 'expert']), (_req, res) => {
   const data = exportRetrainingDataset();
-  res.header('Content-Type', 'text/csv');
+  res.header('Content-Type', 'text/csv; charset=utf-8');
   res.attachment('grape_master_retraining_data.csv');
-  
-  const headers = ['original_query', 'language', 'cnn_prediction', 'final_confidence', 'intent', 'corrected_answer', 'reviewer_name', 'reviewed_at'].join(',');
-  const rows = data.map(r => `"${r.original_query || ''}","${r.language}","${r.cnn_prediction || ''}",${r.final_confidence},"${r.intent || ''}","${r.corrected_answer || ''}","${r.reviewer_name || ''}","${r.reviewed_at}"`).join('\n');
-  
-  res.send(`${headers}\n${rows}`);
+
+  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const headers = ['review_id', 'original_query', 'language', 'cnn_prediction', 'diagnosis_wrong', 'corrected_class', 'final_confidence', 'intent', 'corrected_answer', 'reviewer_name', 'reviewed_at'].join(',');
+  const rows = data.map((r) => [
+    r.review_id,
+    esc(r.original_query),
+    esc(r.language),
+    esc(r.cnn_prediction),
+    r.diagnosis_wrong ? 1 : 0,
+    esc(r.corrected_class),
+    r.final_confidence ?? '',
+    esc(r.intent),
+    esc(r.corrected_answer),
+    esc(r.reviewer_name),
+    esc(r.reviewed_at),
+  ].join(',')).join('\n');
+
+  res.send(`\uFEFF${headers}\n${rows}`);
 });
 
 // ═══════════════════════════════════════════════════════════════
 // STARTUP
 // ═══════════════════════════════════════════════════════════════
 
-async function startServer() {
-  console.log('🚀 Starting Grape Master API Server...');
+export async function initializeApp() {
   initDatabase();
   initLLM();
   await initEmbeddingEngine();
   await ingestPlaceholderData();
   await initVisionEngine();
+}
+
+async function startServer() {
+  console.log('🚀 Starting Grape Master API Server...');
+  await initializeApp();
 
   app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
@@ -311,4 +553,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  startServer();
+}
