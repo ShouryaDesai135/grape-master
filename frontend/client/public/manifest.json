@@ -1,0 +1,23 @@
+{
+  "short_name": "GrapeMaster",
+  "name": "Grape Master — Multilingual Agricultural AI Advisor",
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/home",
+  "background_color": "#0F1A15",
+  "theme_color": "#2D7A4F",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Production multilingual AI advisory chatbot and plant disease detection for grape farmers."
+}
