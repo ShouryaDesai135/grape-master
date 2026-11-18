@@ -11,7 +11,10 @@ export default defineConfig({
       "@shared": path.resolve(import.meta.dirname, "shared"),
     },
   },
+  // root points to frontend/client (where index.html lives)
   root: path.resolve(import.meta.dirname, "client"),
+  // envDir points to frontend/ (where .env.local lives)
+  envDir: path.resolve(import.meta.dirname),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
