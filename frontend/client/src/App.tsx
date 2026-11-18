@@ -205,9 +205,183 @@ function ConfidenceRing({ value, size = 112, label = "confidence" }: { value: nu
   );
 }
 
+function NotificationButton() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleDoc);
+    return () => document.removeEventListener("mousedown", handleDoc);
+  }, []);
+
+  return (
+    <div style={{ position: "relative" }} ref={ref}>
+      <button className="icon-btn" onClick={() => setOpen(!open)} aria-label="System status & alerts">
+        <Bell size={18} />
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", right: 0, top: "calc(100% + 6px)",
+          background: "#ffffff", border: "1px solid #dfe6df", borderRadius: "12px",
+          boxShadow: "0 14px 32px rgba(28,48,34,.14)", width: "270px", zIndex: 100, padding: "14px"
+        }}>
+          <strong style={{ fontSize: "12px", color: "#1c2b23", display: "block", marginBottom: "10px" }}>System Telemetry & Alerts</strong>
+          <div style={{ display: "grid", gap: "8px", fontSize: "11px", color: "#53665a" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#176b4d" }} />
+              <span><strong>AI Leaf Vision:</strong> 7-Class CNN Online</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#176b4d" }} />
+              <span><strong>Knowledge Base:</strong> 1,425 embedded chunks</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#176b4d" }} />
+              <span><strong>Indic Normalizer:</strong> Active (MR, HI, EN)</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#176b4d" }} />
+              <span><strong>Auto-Escalation:</strong> Threshold &lt; 75% active</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HelpCenterModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(20,37,25,.45)", zIndex: 110, display: "grid", placeItems: "center", padding: "16px", backdropFilter: "blur(4px)" }} onClick={onClose}>
+      <div style={{ background: "#ffffff", borderRadius: "18px", maxWidth: "520px", width: "100%", padding: "26px", boxShadow: "0 20px 40px rgba(20,48,30,.2)", border: "1px solid #dcebdc" }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <CircleHelp size={20} style={{ color: "#176b4d" }} />
+            <h3 style={{ margin: 0, fontSize: "17px", color: "#1c2b23" }}>Viticulture Quick Reference</h3>
+          </div>
+          <button className="icon-btn" onClick={onClose}><X size={18} /></button>
+        </div>
+        <div style={{ display: "grid", gap: "12px", fontSize: "12px", color: "#3a4a3e", lineHeight: 1.6 }}>
+          <div style={{ padding: "10px", background: "#f5faf4", borderRadius: "10px", border: "1px solid #dbead9" }}>
+            <strong style={{ color: "#176b4d", display: "block" }}>Powdery Mildew (भुरी रोग)</strong>
+            <span>Spray Wettable Sulfur (80% WDG) @ 2g per liter water. Maintain good canopy ventilation.</span>
+          </div>
+          <div style={{ padding: "10px", background: "#f5faf4", borderRadius: "10px", border: "1px solid #dbead9" }}>
+            <strong style={{ color: "#176b4d", display: "block" }}>Downy Mildew (केवडा रोग)</strong>
+            <span>Spray Metalaxyl + Mancozeb (Ridomil MZ) @ 2g/L or Dimethomorph @ 1g/L during humid foggy spells.</span>
+          </div>
+          <div style={{ padding: "10px", background: "#f5faf4", borderRadius: "10px", border: "1px solid #dbead9" }}>
+            <strong style={{ color: "#176b4d", display: "block" }}>Mealybug Management (पिठ्या ढेकूण)</strong>
+            <span>Swab trunks with Chlorpyrifos 20% EC @ 2 ml/L after April pruning; drench drip with Imidacloprid @ 300 ml/acre.</span>
+          </div>
+        </div>
+        <button className="primary-btn" style={{ width: "100%", marginTop: "18px", padding: "10px" }} onClick={onClose}>
+          Got it
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function VineyardPill() {
+  const { t } = useContext(LanguageContext);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleDoc);
+    return () => document.removeEventListener("mousedown", handleDoc);
+  }, []);
+
+  return (
+    <div style={{ position: "relative" }} ref={ref}>
+      <button
+        type="button"
+        className="workspace-pill"
+        onClick={() => setOpen(!open)}
+        style={{ border: "none", cursor: "pointer", width: "100%", textAlign: "left" }}
+      >
+        <span className="workspace-dot" /> {t('myVineyard')} <ChevronDown size={14} />
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", left: 0, top: "calc(100% + 4px)",
+          background: "#ffffff", border: "1px solid #dfe6df", borderRadius: "12px",
+          boxShadow: "0 12px 28px rgba(28,48,34,.14)", width: "210px", zIndex: 100, padding: "12px"
+        }}>
+          <strong style={{ fontSize: "11px", color: "#1c2b23", display: "block" }}>Maharashtra Vineyards</strong>
+          <span style={{ fontSize: "10px", color: "#738276", display: "block", marginTop: "2px" }}>Nashik / Sangli Region</span>
+          <div style={{ marginTop: "8px", borderTop: "1px solid #eef2ec", paddingTop: "8px", fontSize: "10px", color: "#176b4d" }}>
+            🍇 Thompson &amp; Sharad Seedless
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChatActionsMenu({ onClear, messages }: { onClear: () => void; messages: any[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleDoc);
+    return () => document.removeEventListener("mousedown", handleDoc);
+  }, []);
+
+  const handleExport = () => {
+    setOpen(false);
+    if (!messages.length) return;
+    const text = messages.map(m => `[${(m.role || '').toUpperCase()}]: ${m.text || ''}`).join("\n\n");
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `grape-master-chat-${Date.now()}.txt`;
+    a.click();
+  };
+
+  return (
+    <div style={{ position: "relative" }} ref={ref}>
+      <button className="icon-btn" onClick={() => setOpen(!open)} aria-label="Conversation actions">
+        <MoreHorizontal size={20} />
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", right: 0, top: "calc(100% + 6px)",
+          background: "#ffffff", border: "1px solid #dfe6df", borderRadius: "10px",
+          boxShadow: "0 10px 28px rgba(28,48,34,.14)", minWidth: "160px", zIndex: 60, padding: "6px"
+        }}>
+          <button
+            style={{ width: "100%", padding: "8px 10px", textAlign: "left", background: "none", border: "none", borderRadius: "6px", fontSize: "11px", color: "#1c2b23", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+            onClick={handleExport}
+            disabled={!messages.length}
+          >
+            <Download size={14} /> Export chat
+          </button>
+          <button
+            style={{ width: "100%", padding: "8px 10px", textAlign: "left", background: "none", border: "none", borderRadius: "6px", fontSize: "11px", color: "#c93b2b", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+            onClick={() => { setOpen(false); onClear(); }}
+          >
+            <X size={14} /> Clear chat
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function AppShell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const user = getUserInfo();
   const { lang, t } = useContext(LanguageContext);
   
@@ -219,7 +393,7 @@ function AppShell({ children }: { children: ReactNode }) {
       <aside className={cn("app-sidebar", mobileMenu && "mobile-open")}>
         <div className="sidebar-top">
           <div className="sidebar-brand-row"><Brand /><button className="icon-btn mobile-close" onClick={() => setMobileMenu(false)}><X size={18} /></button></div>
-          <div className="workspace-pill"><span className="workspace-dot" /> {t('myVineyard')} <ChevronDown size={14} /></div>
+          <VineyardPill />
         </div>
         <nav className="sidebar-nav" aria-label="Primary navigation">
           <p className="eyebrow nav-label">{t('workspace')}</p>
@@ -231,7 +405,7 @@ function AppShell({ children }: { children: ReactNode }) {
           {user.type === "admin" && (
             <Link href="/admin" onClick={() => setMobileMenu(false)} className="sidebar-link"><BarChart3 size={17} /><span>{t('farmInsights')}</span><span className="pro-badge">PRO</span></Link>
           )}
-          <button className="sidebar-link sidebar-button"><CircleHelp size={17} /><span>{t('helpCenter')}</span></button>
+          <button className="sidebar-link sidebar-button" onClick={() => setHelpOpen(true)}><CircleHelp size={17} /><span>{t('helpCenter')}</span></button>
         </nav>
         <div className="sidebar-bottom">
           <Link href="/home/profile" className="sidebar-profile"><Avatar size="sm" /><span><strong>{user.name || t('farmer')}</strong><small>{user.email || t('farmerAccount')}</small></span><Settings2 size={16} /></Link>
@@ -239,9 +413,18 @@ function AppShell({ children }: { children: ReactNode }) {
       </aside>
       {mobileMenu && <button className="scrim" aria-label="Close menu" onClick={() => setMobileMenu(false)} />}
       <main className="app-main">
-        <header className="mobile-header"><button className="icon-btn" onClick={() => setMobileMenu(true)}><Menu size={21} /></button><Brand /><div className="mobile-header-actions"><LanguageSwitcher /><Bell size={18} /><Avatar size="sm" /></div></header>
+        <header className="mobile-header">
+          <button className="icon-btn" onClick={() => setMobileMenu(true)}><Menu size={21} /></button>
+          <Brand />
+          <div className="mobile-header-actions">
+            <LanguageSwitcher />
+            <NotificationButton />
+            <Avatar size="sm" />
+          </div>
+        </header>
         {children}
       </main>
+      <HelpCenterModal open={helpOpen} onClose={() => setHelpOpen(false)} />
       <nav className="mobile-bottom-nav"><Link href="/home" className={cn(active === "/home" && "active")}><LayoutDashboard size={19} /><span>{t('dashboard')}</span></Link><Link href="/home/chat/new" className={cn(active === "/home/chat/new" && "active")}><MessageCircle size={19} /><span>{t('askGrape')}</span></Link><Link href="/home/profile" className={cn(active === "/home/profile" && "active")}><UserRound size={19} /><span>{t('profile')}</span></Link></nav>
     </div>
   );
@@ -258,7 +441,17 @@ function PageReveal({ children, className = "" }: { children: ReactNode; classNa
 
 function Topbar({ title, kicker, action }: { title: string; kicker?: string; action?: ReactNode }) {
   const { t } = useContext(LanguageContext);
-  return <div className="topbar"><div><p className="eyebrow">{kicker || t("myWorkspace")}</p><h1>{title}</h1></div><div className="topbar-actions"><LanguageSwitcher /><button className="icon-btn desktop-only"><Bell size={18} /></button><Avatar size="sm" />{action}</div></div>;
+  return (
+    <div className="topbar">
+      <div><p className="eyebrow">{kicker || t("myWorkspace")}</p><h1>{title}</h1></div>
+      <div className="topbar-actions">
+        <LanguageSwitcher />
+        <NotificationButton />
+        <Avatar size="sm" />
+        {action}
+      </div>
+    </div>
+  );
 }
 
 function HomePage() {
@@ -276,7 +469,7 @@ function HomePage() {
           time: c.updated_at ? new Date(c.updated_at).toLocaleDateString(lang === "hi" ? "hi-IN" : lang === "mr" ? "mr-IN" : "en-IN") : t("justNow"),
           language: LANG_DISPLAY[c.language] || c.language || "English",
           kind: c.title?.toLowerCase().includes("water") || c.title?.toLowerCase().includes("irrigation") ? "water" : c.title?.toLowerCase().includes("soil") ? "soil" : "leaf",
-          confidence: c.avg_confidence ? Math.round(c.avg_confidence * 100) : 88,
+          confidence: c.avg_confidence != null ? Number(c.avg_confidence) : undefined,
           flagged: c.has_flagged
         })));
       }
@@ -316,7 +509,7 @@ function HomePage() {
 function ConversationCard({ item, index = 0 }: { item: Conversation; index?: number }) {
   const { t } = useContext(LanguageContext);
   const Icon = item.kind === "image" ? ImagePlus : item.kind === "water" ? Sprout : item.kind === "soil" ? FlaskConical : Leaf;
-  return <Link href={`/home/chat/${item.id}`} className="conversation-card" style={{ animationDelay: `${index * 60}ms` }}><span className={cn("conversation-icon", item.kind)}><Icon size={17} /></span><span className="conversation-main"><strong>{item.title}</strong><span>{item.preview}</span><small>{item.time} <i /> {item.language}</small></span><span className="conversation-meta">{item.flagged ? <span className="flagged-badge"><span /> {t("flagged")}</span> : <span className={cn("confidence-badge", item.confidence && item.confidence >= 80 ? "high" : "medium")}>{item.confidence}% <span>{t("confidenceBadge")}</span></span>}<ChevronRight size={17} /></span></Link>;
+  return <Link href={`/home/chat/${item.id}`} className="conversation-card" style={{ animationDelay: `${index * 60}ms` }}><span className={cn("conversation-icon", item.kind)}><Icon size={17} /></span><span className="conversation-main"><strong>{item.title}</strong><span>{item.preview}</span><small>{item.time} <i /> {item.language}</small></span><span className="conversation-meta">{item.flagged ? <span className="flagged-badge"><span /> {t("flagged")}</span> : item.confidence != null ? <span className={cn("confidence-badge", item.confidence >= 80 ? "high" : "medium")}>{item.confidence}% <span>{t("confidenceBadge")}</span></span> : null}<ChevronRight size={17} /></span></Link>;
 }
 
 function ChatPage({ id: routeId }: { id?: string }) {
@@ -451,7 +644,7 @@ function ChatPage({ id: routeId }: { id?: string }) {
     }
   };
 
-  return <AppShell><div className="chat-page"><div className="chat-topbar"><Link href="/home" className="back-link"><ArrowLeft size={18} /> <span>{t('back')}</span></Link><div className="chat-title"><span className="chat-title-icon"><Leaf size={15} /></span><div><strong>{title}</strong><small>{t('online')}</small></div></div><div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><LanguageSwitcher conversationId={!isNew && id ? id : undefined} onTranslateMessages={translateBotMessages} /><button className="icon-btn"><MoreHorizontal size={20} /></button></div></div>{(langBanner || translating) && <div className="lang-switch-banner"><Globe size={14} /> {translating ? t("translating") : langBanner}</div>}<div className="chat-thread" ref={threadRef}>{messages.length === 0 ? <div className="chat-empty"><span className="empty-sprout"><Sprout size={25} /></span><p className="eyebrow">{t('yourFarmQuestions')}</p><h2>{t('whatToExplore')}</h2><p>{t('describeVineyard')}</p><div className="suggestion-grid"><button onClick={() => sendMessage(t('spotMildew'))}><Leaf size={16} /> {t('spotMildew')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('planIrrigation'))}><Sprout size={16} /> {t('planIrrigation')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('preparePruning'))}><ScissorsIcon /> {t('preparePruning')} <ArrowUpRight size={14} /></button></div></div> : <>{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} message={message} feedback={message.id ? feedbackMap[message.id] || null : null} setFeedback={(val) => handleFeedback(message.id, val || undefined)} />)}{loading && <div className="typing-note"><span className="online-dot" /> {t('analyzing')}</div>}</>}</div><div className="composer-wrap">{attachmentName && <div className="attachment-preview"><span><ImagePlus size={15} /> {attachmentName}</span><button onClick={() => { setImageFile(null); setAttachmentName(null); }}><X size={14} /></button></div>}<div className="composer"><textarea value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder={t('askPlaceholder')} rows={1} /><input ref={fileRef} type="file" accept="image/*" className="hidden-input" onChange={(event) => { const f = event.target.files?.[0]; if (f) { setImageFile(f); setAttachmentName(f.name); } }} /><button className="composer-icon" onClick={() => fileRef.current?.click()} aria-label="Attach image"><Paperclip size={18} /></button><button className={cn("send-btn", (draft.trim() || imageFile) && "ready")} onClick={() => sendMessage()} aria-label="Send message"><Send size={17} /></button></div><div className="composer-footer"><span><ShieldCheck size={13} /> {t('aiGuidance')}</span><span>{t('pressEnter')}</span></div></div></div></AppShell>;
+  return <AppShell><div className="chat-page"><div className="chat-topbar"><Link href="/home" className="back-link"><ArrowLeft size={18} /> <span>{t('back')}</span></Link><div className="chat-title"><span className="chat-title-icon"><Leaf size={15} /></span><div><strong>{title}</strong><small>{t('online')}</small></div></div><div className="chat-topbar-actions"><LanguageSwitcher conversationId={!isNew && id ? id : undefined} onTranslateMessages={translateBotMessages} /><ChatActionsMenu onClear={() => setMessages([])} messages={messages} /></div></div>{(langBanner || translating) && <div className="lang-switch-banner"><Globe size={14} /> {translating ? t("translating") : langBanner}</div>}<div className="chat-thread" ref={threadRef}>{messages.length === 0 ? <div className="chat-empty"><span className="empty-sprout"><Sprout size={25} /></span><p className="eyebrow">{t('yourFarmQuestions')}</p><h2>{t('whatToExplore')}</h2><p>{t('describeVineyard')}</p><div className="suggestion-grid"><button onClick={() => sendMessage(t('spotMildew'))}><Leaf size={16} /> {t('spotMildew')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('planIrrigation'))}><Sprout size={16} /> {t('planIrrigation')} <ArrowUpRight size={14} /></button><button onClick={() => sendMessage(t('preparePruning'))}><ScissorsIcon /> {t('preparePruning')} <ArrowUpRight size={14} /></button></div></div> : <>{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} message={message} feedback={message.id ? feedbackMap[message.id] || null : null} setFeedback={(val) => handleFeedback(message.id, val || undefined)} />)}{loading && <div className="typing-note"><span className="online-dot" /> {t('analyzing')}</div>}</>}</div><div className="composer-wrap">{attachmentName && <div className="attachment-preview"><span><ImagePlus size={15} /> {attachmentName}</span><button onClick={() => { setImageFile(null); setAttachmentName(null); }}><X size={14} /></button></div>}<div className="composer"><textarea value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder={t('askPlaceholder')} rows={1} /><input ref={fileRef} type="file" accept="image/*" className="hidden-input" onChange={(event) => { const f = event.target.files?.[0]; if (f) { setImageFile(f); setAttachmentName(f.name); } }} /><button className="composer-icon" onClick={() => fileRef.current?.click()} aria-label="Attach image"><Paperclip size={18} /></button><button className={cn("send-btn", (draft.trim() || imageFile) && "ready")} onClick={() => sendMessage()} aria-label="Send message"><Send size={17} /></button></div><div className="composer-footer"><span><ShieldCheck size={13} /> {t('aiGuidance')}</span><span>{t('pressEnter')}</span></div></div></div></AppShell>;
 }
 
 function ScissorsIcon() { return <span className="scissors-icon">✂</span>; }
@@ -476,7 +669,7 @@ function ProfilePage() {
     navigate("/auth/login");
   };
 
-  return <AppShell><PageReveal className="page-content profile-content"><div className="profile-back-row"><Link href="/home" className="back-link"><ArrowLeft size={16} /> {t("backToOverview")}</Link><span className="profile-status"><span /> {t("profileSynced")}</span></div><Topbar title={t("profileTitle")} kicker={t("yourAccount")} /><div className="profile-grid"><section className="profile-card profile-overview"><div className="profile-cover"><div className="profile-cover-grid" /><div className="cover-sun" /><div className="cover-row cover-row-one" /><div className="cover-row cover-row-two" /><span className="cover-caption">Nashik · Maharashtra</span></div><div className="profile-avatar-wrap"><Avatar size="lg" /><button className="edit-avatar" aria-label="Edit profile photo"><Camera size={13} /></button></div><div className="profile-identity"><h2>{user.name || t("farmer")}</h2><p>{user.email || "Nashik, Maharashtra"}</p><span className="verified-label"><Check size={13} /> {t("accountVerified")}</span></div><div className="profile-details"><div><span>{t("memberSince")}</span><strong>September 2026</strong></div><div><span>{t("preferredLanguage")}</span><div className="profile-lang-wrap"><LanguageSwitcher /></div></div><div><span>{t("farmProfile")}</span><button className="profile-select">{t("grapeVineyard")} <ChevronDown size={14} /></button></div></div><button className="secondary-btn profile-edit-btn"><Settings2 size={15} /> {t("editFarmProfile")}</button><button className="secondary-btn profile-edit-btn" onClick={handleLogout} style={{ marginTop: '8px', color: '#dc2626', borderColor: '#fca5a5' }}><LogOut size={15} /> {t("signOut")}</button></section><section className="profile-card settings-card"><div className="section-heading"><div><p className="eyebrow">{t("personalize")}</p><h2>{t("preferences")}</h2></div><Settings2 size={20} className="muted-icon" /></div><p className="settings-intro">{t("settingsIntro")}</p><div className="setting-row"><div className="setting-icon"><Bell size={17} /></div><div><strong>{t("helpfulReminders")}</strong><span>{t("helpfulRemindersDesc")}</span></div><Toggle on={reminders} onClick={() => { setReminders(!reminders); localStorage.setItem("reminders", String(!reminders)); }} /></div><div className="setting-row"><div className="setting-icon"><ShieldCheck size={17} /></div><div><strong>{t("expertReviewAlerts")}</strong><span>{t("expertReviewAlertsDesc")}</span></div><Toggle on={alerts} onClick={() => { setAlerts(!alerts); localStorage.setItem("alerts", String(!alerts)); }} /></div><div className="setting-row"><div className="setting-icon"><Bookmark size={17} /></div><div><strong>{t("savedGuidanceTitle")}</strong><span>{t("savedGuidanceDesc")}</span></div><Toggle on={saved} onClick={() => { setSaved(!saved); localStorage.setItem("saved", String(!saved)); }} /></div><div className="saved-guidance"><div className="saved-guidance-heading"><span><Bookmark size={15} /> {t("recentSaved")}</span><button className="text-btn">{t("viewAll")} <ArrowUpRight size={14} /></button></div><p>“Scout 5–10 vines across the block rather than one plant.”</p><small>Powdery mildew · {LANG_DISPLAY[lang]}</small></div></section></div></PageReveal></AppShell>;
+  return <AppShell><PageReveal className="page-content profile-content"><div className="profile-back-row"><Link href="/home" className="back-link"><ArrowLeft size={16} /> {t("backToOverview")}</Link><span className="profile-status"><span /> {t("profileSynced")}</span></div><Topbar title={t("profileTitle")} kicker={t("yourAccount")} /><div className="profile-grid"><section className="profile-card profile-overview"><div className="profile-cover"><div className="profile-cover-grid" /><div className="cover-sun" /><div className="cover-row cover-row-one" /><div className="cover-row cover-row-two" /><span className="cover-caption">Nashik · Maharashtra</span></div><div className="profile-avatar-wrap"><Avatar size="lg" /><button className="edit-avatar" aria-label="Edit profile photo"><Camera size={13} /></button></div><div className="profile-identity"><h2>{user.name || t("farmer")}</h2><p>{user.email || "Nashik, Maharashtra"}</p><span className="verified-label"><Check size={13} /> {t("accountVerified")}</span></div><div className="profile-details"><div><span>{t("memberSince")}</span><strong>September 2026</strong></div><div><span>{t("preferredLanguage")}</span><div className="profile-lang-wrap"><LanguageSwitcher /></div></div><div><span>{t("farmProfile")}</span><button className="profile-select">{t("grapeVineyard")} <ChevronDown size={14} /></button></div></div><button className="secondary-btn profile-edit-btn"><Settings2 size={15} /> {t("editFarmProfile")}</button><button className="secondary-btn profile-edit-btn" onClick={handleLogout} style={{ marginTop: '8px', color: '#dc2626', borderColor: '#fca5a5' }}><LogOut size={15} /> {t("signOut")}</button></section><section className="profile-card settings-card"><div className="section-heading"><div><p className="eyebrow">{t("personalize")}</p><h2>{t("preferences")}</h2></div><Settings2 size={20} className="muted-icon" /></div><p className="settings-intro">{t("settingsIntro")}</p><div className="setting-row"><div className="setting-icon"><Bell size={17} /></div><div><strong>{t("helpfulReminders")}</strong><span>{t("helpfulRemindersDesc")}</span></div><Toggle on={reminders} onClick={() => { setReminders(!reminders); localStorage.setItem("reminders", String(!reminders)); }} /></div><div className="setting-row"><div className="setting-icon"><ShieldCheck size={17} /></div><div><strong>{t("expertReviewAlerts")}</strong><span>{t("expertReviewAlertsDesc")}</span></div><Toggle on={alerts} onClick={() => { setAlerts(!alerts); localStorage.setItem("alerts", String(!alerts)); }} /></div><div className="setting-row"><div className="setting-icon"><Bookmark size={17} /></div><div><strong>{t("savedGuidanceTitle")}</strong><span>{t("savedGuidanceDesc")}</span></div><Toggle on={saved} onClick={() => { setSaved(!saved); localStorage.setItem("saved", String(!saved)); }} /></div><div className="saved-guidance"><div className="saved-guidance-heading"><span><Bookmark size={15} /> {t("recentSaved")}</span><button className="text-btn" onClick={() => navigate("/home")}>{t("viewAll")} <ArrowUpRight size={14} /></button></div><p>“Scout 5–10 vines across the block rather than one plant.”</p><small>Powdery mildew · {LANG_DISPLAY[lang]}</small></div></section></div></PageReveal></AppShell>;
 }
 
 function Toggle({ on, onClick }: { on?: boolean; onClick?: () => void }) { return <button className={cn("toggle", on && "on")} onClick={onClick} aria-pressed={on}><span /></button>; }

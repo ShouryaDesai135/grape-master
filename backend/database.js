@@ -366,7 +366,10 @@ export function getConversationsByFarmer(farmerId, limit = 50) {
   return getDb().prepare(`
     SELECT c.*, 
       (SELECT content FROM messages WHERE conversation_id = c.id AND sender = 'farmer' ORDER BY created_at ASC LIMIT 1) as first_message,
-      (SELECT COUNT(*) FROM messages WHERE conversation_id = c.id) as message_count
+      (SELECT content FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1) as last_message,
+      (SELECT COUNT(*) FROM messages WHERE conversation_id = c.id) as message_count,
+      (SELECT ROUND(AVG(final_confidence) * 100) FROM messages WHERE conversation_id = c.id AND sender = 'bot' AND final_confidence IS NOT NULL) as avg_confidence,
+      (SELECT MAX(is_flagged) FROM messages WHERE conversation_id = c.id) as has_flagged
     FROM conversations c
     WHERE c.farmer_id = ?
     ORDER BY c.updated_at DESC
